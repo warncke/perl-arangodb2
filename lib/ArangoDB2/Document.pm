@@ -113,6 +113,33 @@ sub delete
     return $res;
 }
 
+# edges
+#
+# GET /_api/edges/{collection-id}
+#
+# even though this is under the edge API it is the edges for a document
+# so it makes more since for this to be a method on the document that the
+# edges are being retrieved for.
+#
+# the edges method must be called with the edge collection that the edges
+# are being retrieved from.
+sub edges
+{
+    my($self, $collection, $args) = @_;
+    # set default args
+    $args ||= {};
+    # require valid args
+    die 'Invalid Args'
+        unless ref $args eq 'HASH';
+    # get the edges fro this document
+    $args->{vertex} = join('/', $self->collection->name, $self->name);
+
+    return $self->arango->http->get(
+        $self->api_path('edges', $collection->name),
+        $args,
+    );
+}
+
 # get
 #
 # GET /_api/document/{document-handle}
@@ -298,6 +325,8 @@ ArangoDB2::Document - ArangoDB2 document API methods
 
 =item delete
 
+=item edges
+
 =item get
 
 =item head
@@ -328,5 +357,3 @@ This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
-
-

@@ -11,6 +11,7 @@ use Data::Dumper;
 use JSON::XS;
 
 use ArangoDB2::Document;
+use ArangoDB2::Edge;
 
 my $JSON = JSON::XS->new->utf8;
 
@@ -60,6 +61,12 @@ sub create
     # set name arg
     $args->{name} = $self->name;
 
+    # allow type to be passed by name
+    if ($args->{type}) {
+        $args->{type} = 3 if $args->{type} =~ m{edge}i;
+        $args->{type} = 2 if $args->{type} =~ m{doc}i;
+    }
+
     return $self->arango->http->post(
         $self->api_path('collection'),
         undef,
@@ -81,13 +88,13 @@ sub delete
 
 # document
 #
-# get a specific ArangoDB2::Document by handle or create a
+# get a specific ArangoDB2::Document by name (_key) or create a
 # new blank ArangoDB2::Document
 sub document
 {
     my($self, $name) = @_;
 
-    # if name (document _id) is passed then instantiate a new
+    # if name (_key) is passed then instantiate a new
     # object with that name, which will retrieve the object
     if (defined $name) {
         return $self->documents->{$name} ||= ArangoDB2::Document->new(
@@ -110,8 +117,42 @@ sub document
 
 # documents
 #
-#
+# register of ArangoDB2::Document objects by name (_key)
 sub documents { $_[0]->{documents} ||= {} }
+
+# edge
+#
+# get a specific ArangoDB2::Edge by name (_key) or create a
+# new blank ArangoDB2::Edge
+sub edge
+{
+    my($self, $name) = @_;
+
+    # if name (_key) is passed then instantiate a new
+    # object with that name, which will retrieve the object
+    if (defined $name) {
+        return $self->edges->{$name} ||= ArangoDB2::Edge->new(
+            $self->arango,
+            $self->database,
+            $self,
+            $name,
+        );
+    }
+    # otherwise create a new empty document that can be used to
+    # create a new document
+    else {
+        return ArangoDB2::Edge->new(
+            $self->arango,
+            $self->database,
+            $self,
+        );
+    }
+}
+
+# edges
+#
+# register of ArangoDB2::Edge objects by name (_key)
+sub edges { $_[0]->{edges} ||= {} }
 
 # figures
 #
@@ -309,6 +350,10 @@ ArangoDB2::Collection - ArangoDB2 collection API methods
 =item document
 
 =item documents
+
+=item edge
+
+=item edges
 
 =item figures
 
