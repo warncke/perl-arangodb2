@@ -1,7 +1,7 @@
 # skip vim temp files
 \.swp$
 # skip git
-\.git$
+\.git
 # skip default files
 Makefile
 MANIFEST.bak
