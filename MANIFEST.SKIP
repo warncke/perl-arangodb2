@@ -3,8 +3,7 @@
 # skip git
 \.git
 # skip default files
-Makefile
+Makefile$
 MANIFEST.bak
 MYMETA.json
 MYMETA.yml
-
