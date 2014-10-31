@@ -52,6 +52,21 @@ sub new
     return bless($self, $class);
 }
 
+# api_path
+#
+# return /_db/<db name>/_api
+sub api_path
+{
+    my $self = shift;
+
+    my $db_name
+        = $self->database
+        ? $self->database->name
+        : $self->name;
+
+    return '/' . join('/', '_db', $db_name, '_api', @_);
+}
+
 # arango
 #
 # ArangoDB2 instance
@@ -66,21 +81,6 @@ sub collection { $_[0]->{collection} }
 #
 # parent Arango::DB database instance
 sub database { $_[0]->{database} }
-
-# db_path
-#
-# return /_db/<db name>
-sub db_path
-{
-    my($self) = @_;
-
-    my $db_name
-        = $self->database
-        ? $self->database->name
-        : $self->name;
-
-    return "/_db/$db_name";
-}
 
 # name
 #
@@ -102,13 +102,13 @@ ArangoDB2::Base - Base class for other ArangoDB2 objects
 
 =item new
 
+=item api_path
+
 =item arango
 
 =item collection
 
 =item database
-
-=item db_path
 
 =item name
 

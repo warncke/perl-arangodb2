@@ -29,7 +29,7 @@ sub checksum
     my($self, $args) = @_;
 
     return $self->arango->http->get(
-        $self->db_path . '/_api/collection/' . $self->name . '/checksum',
+        $self->api_path('collection', $self->name, 'checksum'),
         $args,
     );
 }
@@ -42,7 +42,7 @@ sub count
     my($self) = @_;
 
     return $self->arango->http->get(
-        $self->db_path . '/_api/collection/' . $self->name . '/count'
+        $self->api_path('collection', $self->name, 'count'),
     );
 }
 
@@ -61,7 +61,7 @@ sub create
     $args->{name} = $self->name;
 
     return $self->arango->http->post(
-        $self->db_path . '/_api/collection',
+        $self->api_path('collection'),
         undef,
         $JSON->encode($args),
     );
@@ -75,7 +75,7 @@ sub delete
     my($self) = @_;
 
     return $self->arango->http->delete(
-        $self->db_path . '/_api/collection/' . $self->name
+        $self->api_path('collection', $self->name),
     );
 }
 
@@ -121,7 +121,7 @@ sub figures
     my($self) = @_;
 
     return $self->arango->http->get(
-        $self->db_path . '/_api/collection/' . $self->name . '/figures'
+        $self->api_path('collection', $self->name, 'figures'),
     );
 }
 
@@ -133,7 +133,7 @@ sub info
     my($self) = @_;
 
     return $self->arango->http->get(
-        $self->db_path . '/_api/collection/' . $self->name
+        $self->api_path('collection', $self->name),
     );
 }
 
@@ -149,7 +149,7 @@ sub list
     my($self, $args) = @_;
 
     return $self->arango->http->get(
-        $self->db_path . '/_api/collection',
+        $self->api_path('collection'),
         $args,
     );
 }
@@ -166,7 +166,7 @@ sub load
     my($self, $args) = @_;
 
     return $self->arango->http->put(
-        $self->db_path . '/_api/collection/' . $self->name . '/load',
+        $self->api_path('collection', $self->name, 'load'),
         $args,
     );
 }
@@ -188,7 +188,7 @@ sub properties
 {
     my($self, $args) = @_;
 
-    my $path = $self->db_path . '/_api/collection/' . $self->name . '/properties';
+    my $path = $self->api_path('collection', $self->name, 'properties');
 
     # need to use true / false bool values
     if ( $args && exists $args->{waitForSync} ) {
@@ -196,7 +196,9 @@ sub properties
     }
 
     return $args
+        # if args are passed then set with PUT
         ? $self->arango->http->put($path, undef, $JSON->encode($args))
+        # otherwise get properties
         : $self->arango->http->get($path);
 }
 
@@ -215,7 +217,7 @@ sub rename
     my $new_name = $args->{name};
 
     my $res = $self->arango->http->put(
-        $self->db_path . '/_api/collection/' . $self->name . '/rename',
+        $self->api_path('collection', $self->name, 'rename'),
         undef,
         $JSON->encode($args),
     );
@@ -241,7 +243,7 @@ sub revision
     my($self) = @_;
 
     return $self->arango->http->get(
-        $self->db_path . '/_api/collection/' . $self->name . '/revision'
+        $self->api_path('collection', $self->name, 'revision'),
     );
 }
 
@@ -253,7 +255,7 @@ sub rotate
     my($self) = @_;
 
     return $self->arango->http->put(
-        $self->db_path . '/_api/collection/' . $self->name . '/rotate',
+        $self->api_path('collection', $self->name, 'rotate'),
     );
 }
 
@@ -265,7 +267,7 @@ sub truncate
     my($self) = @_;
 
     return $self->arango->http->put(
-        $self->db_path . '/_api/collection/' . $self->name . '/truncate'
+        $self->api_path('collection', $self->name, 'truncate'),
     );
 }
 
@@ -277,7 +279,7 @@ sub unload
     my($self) = @_;
 
     return $self->arango->http->put(
-        $self->db_path . '/_api/collection/' . $self->name . '/unload'
+        $self->api_path('collection', $self->name, 'unload'),
     );
 }
 

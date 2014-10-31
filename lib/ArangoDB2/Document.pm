@@ -50,7 +50,7 @@ sub create
     $args->{collection} = $self->collection->name;
 
     my $res = $self->arango->http->post(
-        $self->db_path . '/_api/document',
+        $self->api_path($self->type),
         $args,
         $JSON->encode($doc),
     );
@@ -65,7 +65,7 @@ sub create
         # store revision number
         $self->{rev} = $res->{_rev};
         # store in document register
-        $self->collection->documents->{$self->name} = $self;
+        $self->collection->{ $self->type . 's' }->{$self->name} = $self;
     }
 
     return $res;
@@ -95,14 +95,14 @@ sub delete
         unless ref $args eq 'HASH';
 
     my $res = $self->arango->http->delete(
-        $self->db_path . '/_api/document/' . $self->collection->name . '/' . $self->name,
+        $self->api_path($self->type, $self->collection->name, $self->name),
         $args,
     );
 
     # if request was success then update internal state
     if ( $res && $res->{_key} ) {
         # remove registry entry
-        delete $self->collection->documents->{$self->name};
+        delete $self->collection->{ $self->type . 's' }->{$self->name};
         # remove data and rev which are now null
         delete $self->{data};
         delete $self->{rev};
@@ -119,7 +119,7 @@ sub get
     my($self) = @_;
 
     my $res = $self->arango->http->get(
-        $self->db_path . '/_api/document/' . $self->collection->name . '/' . $self->name
+        $self->api_path($self->type, $self->collection->name, $self->name),
     );
 
     # if request was success then update internal state
@@ -147,7 +147,7 @@ sub head
     my($self) = @_;
 
     my $res = $self->arango->http->head(
-        $self->db_path . '/_api/document/' . $self->collection->name . '/' . $self->name
+        $self->api_path($self->type, $self->collection->name, $self->name),
     );
 
     return $res;
@@ -176,7 +176,7 @@ sub list
     $args->{collection} = $self->collection->name;
 
     return $self->arango->http->get(
-        $self->db_path . '/_api/document',
+        $self->api_path($self->type),
         $args
     );
 }
@@ -203,7 +203,7 @@ sub patch
         and ref $args eq 'HASH';
 
     my $res = $self->arango->http->patch(
-        $self->db_path . '/_api/document/' . $self->collection->name . '/' . $self->name,
+        $self->api_path($self->type, $self->collection->name, $self->name),
         $args,
         $JSON->encode($doc),
     );
@@ -244,7 +244,7 @@ sub replace
         and ref $args eq 'HASH';
 
     my $res = $self->arango->http->put(
-        $self->db_path . '/_api/document/' . $self->collection->name . '/' . $self->name,
+        $self->api_path($self->type, $self->collection->name, $self->name),
         $args,
         $JSON->encode($doc),
     );
@@ -269,6 +269,11 @@ sub replace
 #
 # revision of currently loaded document data
 sub rev { $_[0]->{rev} }
+
+# type
+#
+# type of document: either `document` or `edge`
+sub type { 'document' }
 
 1;
 
@@ -302,6 +307,8 @@ ArangoDB2::Document - ArangoDB2 document API methods
 =item replace
 
 =item rev
+
+=item type
 
 =back
 
