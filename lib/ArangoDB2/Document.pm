@@ -65,7 +65,8 @@ sub create
         # store revision number
         $self->{rev} = $res->{_rev};
         # store in document register
-        $self->collection->{ $self->type . 's' }->{$self->name} = $self;
+        my $register = $self->type . 's';
+        $self->collection->$register->{$self->name} = $self;
     }
 
     return $res;
@@ -102,7 +103,8 @@ sub delete
     # if request was success then update internal state
     if ( $res && $res->{_key} ) {
         # remove registry entry
-        delete $self->collection->{ $self->type . 's' }->{$self->name};
+        my $register = $self->type . 's';
+        delete $self->collection->$register->{$self->name};
         # remove data and rev which are now null
         delete $self->{data};
         delete $self->{rev};
