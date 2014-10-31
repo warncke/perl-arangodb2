@@ -1,6 +1,8 @@
 ArangoDB2
 
-AragoDB provides an interface to the ArangoDB2 HTTP API.
+ArangoDB2 provides an interface to the ArangoDB HTTP API v2.2.
+
+https://docs.arangodb.com/HttpApi/README.html
 
 INSTALLATION
 

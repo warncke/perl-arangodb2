@@ -39,12 +39,12 @@ sub new
 
 # delete
 #
-# make a DELETE request using the ArangoDB2 API uri along with
+# make a DELETE request using the ArangoDB API uri along with
 # the path and any args passed
 sub delete
 {
     my($self, $path, $args) = @_;
-    # get copy of ArangoDB2 API URI
+    # get copy of ArangoDB API URI
     my $uri = $self->arango->uri->clone;
     # set path for request
     $uri->path($path);
@@ -58,12 +58,12 @@ sub delete
 
 # get
 #
-# make a GET request using the ArangoDB2 API uri along with
+# make a GET request using the ArangoDB API uri along with
 # the path and any args passed
 sub get
 {
     my($self, $path, $args) = @_;
-    # get copy of ArangoDB2 API URI
+    # get copy of ArangoDB API URI
     my $uri = $self->arango->uri->clone;
     # set path for request
     $uri->path($path);
@@ -77,12 +77,12 @@ sub get
 
 # head
 #
-# make a HEAD request using the ArangoDB2 API uri along with
+# make a HEAD request using the ArangoDB API uri along with
 # the path and any args passed
 sub head
 {
     my($self, $path, $args) = @_;
-    # get copy of ArangoDB2 API URI
+    # get copy of ArangoDB API URI
     my $uri = $self->arango->uri->clone;
     # set path for request
     $uri->path($path);
@@ -101,12 +101,12 @@ sub lwp { $_[0]->{lwp} }
 
 # patch
 #
-# make a PATCH request using the ArangoDB2 API uri along with
+# make a PATCH request using the ArangoDB API uri along with
 # the path and any args passed
 sub patch
 {
     my($self, $path, $args, $patch) = @_;
-    # get copy of ArangoDB2 API URI
+    # get copy of ArangoDB API URI
     my $uri = $self->arango->uri->clone;
     # set path for request
     $uri->path($path);
@@ -123,12 +123,12 @@ sub patch
 
 # put
 #
-# make a PUT request using the ArangoDB2 API uri along with
+# make a PUT request using the ArangoDB API uri along with
 # the path and any args passed
 sub put
 {
     my($self, $path, $args, $put) = @_;
-    # get copy of ArangoDB2 API URI
+    # get copy of ArangoDB API URI
     my $uri = $self->arango->uri->clone;
     # set path for request
     $uri->path($path);
@@ -147,12 +147,12 @@ sub put
 
 # post
 #
-# make a POST request using the ArangoDB2 API uri along with
+# make a POST request using the ArangoDB API uri along with
 # the path and any args passed
 sub post
 {
     my($self, $path, $args, $post) = @_;
-    # get copy of ArangoDB2 API URI
+    # get copy of ArangoDB API URI
     my $uri = $self->arango->uri->clone;
     # set path for request
     $uri->path($path);
@@ -202,7 +202,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB2::HTTP::LWP - ArangoDB2 HTTP transport layer implemented with LWP
+ArangoDB2::HTTP::LWP - ArangoDB HTTP transport layer implemented with LWP
 
 =head1 METHODS
 
