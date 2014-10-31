@@ -6,6 +6,7 @@ lib/ArangoDB2/Base.pm
 lib/ArangoDB2/Collection.pm
 lib/ArangoDB2/Database.pm
 lib/ArangoDB2/Document.pm
+lib/ArangoDB2/Edge.pm
 lib/ArangoDB2/HTTP.pm
 lib/ArangoDB2/HTTP/LWP.pm
 Makefile.PL
@@ -18,6 +19,7 @@ t/02-admin.t
 t/03-database.t
 t/04-collection.t
 t/05-document.t
+t/06-edge.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
