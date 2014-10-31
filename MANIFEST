@@ -1,13 +1,13 @@
 Changes
 ignore.txt
-lib/ArangoDB.pm
-lib/ArangoDB/Admin.pm
-lib/ArangoDB/Base.pm
-lib/ArangoDB/Collection.pm
-lib/ArangoDB/Database.pm
-lib/ArangoDB/Document.pm
-lib/ArangoDB/HTTP.pm
-lib/ArangoDB/HTTP/LWP.pm
+lib/ArangoDB2.pm
+lib/ArangoDB2/Admin.pm
+lib/ArangoDB2/Base.pm
+lib/ArangoDB2/Collection.pm
+lib/ArangoDB2/Database.pm
+lib/ArangoDB2/Document.pm
+lib/ArangoDB2/HTTP.pm
+lib/ArangoDB2/HTTP/LWP.pm
 MANIFEST			This list of files
 MANIFEST.SKIP
 README

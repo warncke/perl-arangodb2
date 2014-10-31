@@ -1,16 +1,16 @@
-package ArangoDB::Collection;
+package ArangoDB2::Collection;
 
 use strict;
 use warnings;
 
 use base qw(
-    ArangoDB::Base
+    ArangoDB2::Base
 );
 
 use Data::Dumper;
 use JSON::XS;
 
-use ArangoDB::Document;
+use ArangoDB2::Document;
 
 my $JSON = JSON::XS->new->utf8;
 
@@ -81,8 +81,8 @@ sub delete
 
 # document
 #
-# get a specific ArangoDB::Document by handle or create a
-# new blank ArangoDB::Document
+# get a specific ArangoDB2::Document by handle or create a
+# new blank ArangoDB2::Document
 sub document
 {
     my($self, $name) = @_;
@@ -90,7 +90,7 @@ sub document
     # if name (document _id) is passed then instantiate a new
     # object with that name, which will retrieve the object
     if (defined $name) {
-        return $self->documents->{$name} ||= ArangoDB::Document->new(
+        return $self->documents->{$name} ||= ArangoDB2::Document->new(
             $self->arango,
             $self->database,
             $self,
@@ -100,7 +100,7 @@ sub document
     # otherwise create a new empty document that can be used to
     # create a new document
     else {
-        return ArangoDB::Document->new(
+        return ArangoDB2::Document->new(
             $self->arango,
             $self->database,
             $self,
@@ -224,9 +224,9 @@ sub rename
     if ($res && $res->{name} eq $new_name) {
         # change internal name
         $self->{name} = $new_name;
-        # delete old name from ArangoDB::Database register
+        # delete old name from ArangoDB2::Database register
         delete $self->database->collections->{$old_name};
-        # set new name in ArangoDB::Database register
+        # set new name in ArangoDB2::Database register
         $self->database->collections->{$new_name} = $self;
     }
 
@@ -288,7 +288,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB::Collection - ArangoDB collection API methods
+ArangoDB2::Collection - ArangoDB2 collection API methods
 
 =head1 METHODS
 

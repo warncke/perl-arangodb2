@@ -4,17 +4,17 @@ use warnings;
 use Data::Dumper;
 use Test::More;
 
-use ArangoDB;
+use ArangoDB2;
 
 my $res;
 
-my $arango = ArangoDB->new("http://localhost:8529");
+my $arango = ArangoDB2->new("http://localhost:8529");
 
 my $dbname = "ngukvderybvfgjutecbxzsfhyujmnvgf";
 my $database = $arango->database($dbname);
 my $collection = $database->collection('test');
 my $document = $collection->document();
-isa_ok($document, 'ArangoDB::Document');
+isa_ok($document, 'ArangoDB2::Document');
 
 # test required methods
 my @methods = qw(
@@ -33,7 +33,7 @@ for my $method (@methods) {
     can_ok($document, $method);
 }
 
-# skip tests against the actual ArangoDB server unless
+# skip tests against the actual ArangoDB2 server unless
 # LIVE_TEST env param is set
 if (!$ENV{LIVE_TEST}) {
     diag("Skipping live API tests - set LIVE_TEST=1 to enable");

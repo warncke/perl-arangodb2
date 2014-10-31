@@ -4,11 +4,11 @@ use warnings;
 use Data::Dumper;
 use Test::More;
 
-use ArangoDB;
+use ArangoDB2;
 
 my $res;
 
-my $arango = ArangoDB->new("http://localhost:8529");
+my $arango = ArangoDB2->new("http://localhost:8529");
 
 # test required methods
 my @methods = qw(
@@ -25,12 +25,12 @@ for my $method (@methods) {
 }
 
 # test for sub objects accessors
-isa_ok($arango->admin, 'ArangoDB::Admin');
-isa_ok($arango->database, 'ArangoDB::Database');
-isa_ok($arango->http, 'ArangoDB::HTTP');
+isa_ok($arango->admin, 'ArangoDB2::Admin');
+isa_ok($arango->database, 'ArangoDB2::Database');
+isa_ok($arango->http, 'ArangoDB2::HTTP');
 isa_ok($arango->uri, 'URI');
 
-# skip tests against the actual ArangoDB server unless
+# skip tests against the actual ArangoDB2 server unless
 # LIVE_TEST env param is set
 if (!$ENV{LIVE_TEST}) {
     diag("Skipping live API tests - set LIVE_TEST=1 to enable");

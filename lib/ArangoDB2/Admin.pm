@@ -1,10 +1,10 @@
-package ArangoDB::Admin;
+package ArangoDB2::Admin;
 
 use strict;
 use warnings;
 
 use base qw(
-    ArangoDB::Base
+    ArangoDB2::Base
 );
 
 
@@ -32,7 +32,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB::Admin - ArangoDB admin API methods
+ArangoDB2::Admin - ArangoDB2 admin API methods
 
 =head1 METHODS
 

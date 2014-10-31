@@ -4,10 +4,10 @@ use warnings FATAL => 'all';
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    NAME             => 'ArangoDB',
+    NAME             => 'ArangoDB2',
     AUTHOR           => q{Ersun Warncke <ersun.warncke@outlook.com>},
-    VERSION_FROM     => 'lib/ArangoDB.pm',
-    ABSTRACT_FROM    => 'lib/ArangoDB.pm',
+    VERSION_FROM     => 'lib/ArangoDB2.pm',
+    ABSTRACT_FROM    => 'lib/ArangoDB2.pm',
     LICENSE          => 'Artistic_2_0',
     PL_FILES         => {},
     MIN_PERL_VERSION => 5.006,
@@ -22,5 +22,5 @@ WriteMakefile(
         #'Foo::Bar::Module' => 5.0401,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
-    clean => { FILES => 'ArangoDB-*' },
+    clean => { FILES => 'ArangoDB2-*' },
 );

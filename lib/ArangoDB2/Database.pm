@@ -1,17 +1,17 @@
-package ArangoDB::Database;
+package ArangoDB2::Database;
 
 use strict;
 use warnings;
 
 use base qw(
-    ArangoDB::Base
+    ArangoDB2::Base
 );
 
 use Data::Dumper;
 use JSON::XS;
 use Scalar::Util qw(reftype);
 
-use ArangoDB::Collection;
+use ArangoDB2::Collection;
 
 my $JSON = JSON::XS->new->utf8;
 
@@ -19,15 +19,15 @@ my $JSON = JSON::XS->new->utf8;
 
 # collection
 #
-# named ArangoDB::Collection object existing under this Database
+# named ArangoDB2::Collection object existing under this Database
 sub collection
 {
     my($self, $name) = @_;
     # require name
     die "Collection name Required"
         unless $name;
-    # only create one ArangoDB::Collection instance per name
-    return $self->collections->{$name} ||= ArangoDB::Collection->new(
+    # only create one ArangoDB2::Collection instance per name
+    return $self->collections->{$name} ||= ArangoDB2::Collection->new(
         $self->arango,
         $self,
         $name,
@@ -36,7 +36,7 @@ sub collection
 
 # collections
 #
-# index of ArangoDB::Collection objects belonging to this Database by name
+# index of ArangoDB2::Collection objects belonging to this Database by name
 sub collections { $_[0]->{collections} ||= {} }
 
 # create
@@ -119,7 +119,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB::Database - ArangoDB database API methods
+ArangoDB2::Database - ArangoDB2 database API methods
 
 =head1 METHODS
 

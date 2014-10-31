@@ -3,6 +3,6 @@ use warnings;
 
 use Test::More;
 
-use_ok('ArangoDB');
+use_ok('ArangoDB2');
 
 done_testing();

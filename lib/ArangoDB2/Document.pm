@@ -1,10 +1,10 @@
-package ArangoDB::Document;
+package ArangoDB2::Document;
 
 use strict;
 use warnings;
 
 use base qw(
-    ArangoDB::Base
+    ArangoDB2::Base
 );
 
 use Data::Dumper;
@@ -277,7 +277,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB::Document - ArangoDB document API methods
+ArangoDB2::Document - ArangoDB2 document API methods
 
 =head1 METHODS
 

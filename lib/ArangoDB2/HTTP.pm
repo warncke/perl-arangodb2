@@ -1,27 +1,27 @@
-package ArangoDB::HTTP;
+package ArangoDB2::HTTP;
 
 use strict;
 use warnings;
 
-use ArangoDB::HTTP::LWP;
+use ArangoDB2::HTTP::LWP;
 
 
 
 # new
 #
-# create new ArangoDB::HTTP instance which will always be
-# one of the sub-classes of ArangoDB::HTTP which implements
+# create new ArangoDB2::HTTP instance which will always be
+# one of the sub-classes of ArangoDB2::HTTP which implements
 # a particular HTTP client
 sub new
 {
     my $self = shift;
     # for now use LWP client
-    return ArangoDB::HTTP::LWP->new(@_);
+    return ArangoDB2::HTTP::LWP->new(@_);
 }
 
 # arango
 #
-# ArangoDB instance
+# ArangoDB2 instance
 sub arango { $_[0]->{arango} }
 
 # error
@@ -44,7 +44,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB::HTTP - Base class for HTTP transport layer implementations
+ArangoDB2::HTTP - Base class for HTTP transport layer implementations
 
 =head1 METHODS
 

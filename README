@@ -1,6 +1,6 @@
-ArangoDB
+ArangoDB2
 
-AragoDB provides an interface to the ArangoDB HTTP API.
+AragoDB provides an interface to the ArangoDB2 HTTP API.
 
 INSTALLATION
 
@@ -16,21 +16,21 @@ SUPPORT AND DOCUMENTATION
 After installing, you can find documentation for this module with the
 perldoc command.
 
-    perldoc ArangoDB
+    perldoc ArangoDB2
 
 You can also look for information at:
 
     RT, CPAN's request tracker (report bugs here)
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=ArangoDB
+        http://rt.cpan.org/NoAuth/Bugs.html?Dist=ArangoDB2
 
     AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/ArangoDB
+        http://annocpan.org/dist/ArangoDB2
 
     CPAN Ratings
-        http://cpanratings.perl.org/d/ArangoDB
+        http://cpanratings.perl.org/d/ArangoDB2
 
     Search CPAN
-        http://search.cpan.org/dist/ArangoDB/
+        http://search.cpan.org/dist/ArangoDB2/
 
 
 LICENSE AND COPYRIGHT

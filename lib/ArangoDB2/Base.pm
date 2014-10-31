@@ -1,4 +1,4 @@
-package ArangoDB::Base;
+package ArangoDB2::Base;
 
 use strict;
 use warnings;
@@ -11,13 +11,13 @@ use Scalar::Util qw(weaken);
 #
 # Arango organizes data hierarchically as: Databases > Collections > Documents
 #
-# This constructor can build ArangoDB::Database, Collection, and Document objects
+# This constructor can build ArangoDB2::Database, Collection, and Document objects
 # which all follow the same pattern
 sub new
 {
     my($class, $arango, $database, $collection, $document) = @_;
     # arango object is always required
-    die "ArangoDB Object Required"
+    die "ArangoDB2 Object Required"
         unless defined $arango;
     # prevent circular ref
     weaken $arango;
@@ -54,7 +54,7 @@ sub new
 
 # arango
 #
-# ArangoDB instance
+# ArangoDB2 instance
 sub arango { $_[0]->{arango} }
 
 # collection
@@ -94,7 +94,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB::Base - Base class for other ArangoDB objects
+ArangoDB2::Base - Base class for other ArangoDB2 objects
 
 =head1 METHODS
 

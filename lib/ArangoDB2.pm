@@ -1,4 +1,4 @@
-package ArangoDB;
+package ArangoDB2;
 
 use strict;
 use warnings;
@@ -7,14 +7,14 @@ our $VERSION = '0.01';
 
 use URI;
 
-use ArangoDB::Admin;
-use ArangoDB::Database;
-use ArangoDB::HTTP;
+use ArangoDB2::Admin;
+use ArangoDB2::Database;
+use ArangoDB2::HTTP;
 
 
 # new
 #
-# create new ArangoDB instance from string argument specifying
+# create new ArangoDB2 instance from string argument specifying
 # API endpoint or hashref of args
 sub new
 {
@@ -30,37 +30,37 @@ sub new
 
 # admin
 #
-# ArangoDB::Admin object which provides access to methods in
+# ArangoDB2::Admin object which provides access to methods in
 # the /_admin group
 sub admin
 {
     my($self) = @_;
 
-    return $self->{admin} ||= ArangoDB::Admin->new($self);
+    return $self->{admin} ||= ArangoDB2::Admin->new($self);
 }
 
 # database
 #
-# ArangoDB::Database object which provides access to methods
+# ArangoDB2::Database object which provides access to methods
 # in the /_api/database group
 sub database
 {
     my($self, $name) = @_;
     # default database for arango is _system
     $name ||= "_system";
-    # only create one instance per ArangoDB per database, each ArangoDB
+    # only create one instance per ArangoDB2 per database, each ArangoDB2
     # keeps its own instances since they may have different credentials
-    return $self->databases->{$name} ||= ArangoDB::Database->new($self, $name);
+    return $self->databases->{$name} ||= ArangoDB2::Database->new($self, $name);
 }
 
 # databases
 #
-# Index of active ArangoDB::Database objects by name
+# Index of active ArangoDB2::Database objects by name
 sub databases { $_[0]->{databases} ||= {} }
 
 # http
 #
-# ArangoDB::HTTP object.  This provides normalized interface to
+# ArangoDB2::HTTP object.  This provides normalized interface to
 # various HTTP clients.
 sub http
 {
@@ -69,7 +69,7 @@ sub http
     $self->{http} = $http
         if defined $http;
 
-    return $self->{http} ||= ArangoDB::HTTP->new($self);
+    return $self->{http} ||= ArangoDB2::HTTP->new($self);
 }
 
 # uri
@@ -107,11 +107,11 @@ __END__
 
 =head1 NAME
 
-ArangoDB - ArangoDB HTTP API Interface
+ArangoDB2 - ArangoDB2 HTTP API Interface
 
 =head1 SYNOPSIS
 
-my $arango = ArangoDB->new("http://localhost:8259");
+my $arango = ArangoDB2->new("http://localhost:8259");
 
 my $database = $arango->database("test");
 my $collection = $database->collection("test");
@@ -124,7 +124,7 @@ $document->patch({foo => bar});
 
 =head1 DESCRIPTION
 
-ArangoDB provides an interface to the ArangoDB database.
+ArangoDB2 provides an interface to the ArangoDB2 database.
 
 The Collection and Document APIs are 100% implemented, with the exception of
 support for ETag based conditional operations.
