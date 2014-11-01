@@ -43,6 +43,8 @@ sub collections { $_[0]->{collections} ||= {} }
 # create
 #
 # POST /_api/database
+#
+# return self on success, undef on failure
 sub create
 {
     my($self, $args) = @_;
@@ -55,11 +57,13 @@ sub create
     # set name arg
     $args->{name} = $self->name;
 
-    return $self->arango->http->post(
+    my $res = $self->arango->http->post(
         '/_api/database',
         undef,
         $JSON->encode($args),
-    );
+    ) or return;
+
+    return $self;
 }
 
 # current

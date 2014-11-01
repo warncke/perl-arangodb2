@@ -36,6 +36,8 @@ sub new
 #
 # collection: The collection name.
 # createCollection: If this parameter has a value of true or yes, then the collection is created if it does not yet exist. Other values will be ignored so the collection must be present for the operation to succeed.
+#
+# return self on success, undef on failure
 sub create
 {
     my($self, $doc, $args) = @_;
@@ -53,23 +55,21 @@ sub create
         $self->api_path($self->type),
         $args,
         $JSON->encode($doc),
-    );
+    ) or return;
 
     # if creation was success then update internal state
-    if ( $res && $res->{_key} ) {
-        # set name to the value of _key
-        $self->{name} = $res->{_key};
-        # set data pointer to the passed in doc. any patches
-        # will then update the original hash
-        $self->{data} = $doc;
-        # store revision number
-        $self->{rev} = $res->{_rev};
-        # store in document register
-        my $register = $self->type . 's';
-        $self->collection->$register->{$self->name} = $self;
-    }
+    # set name to the value of _key
+    $self->{name} = $res->{_key};
+    # set data pointer to the passed in doc. any patches
+    # will then update the original hash
+    $self->{data} = $doc;
+    # store revision number
+    $self->{rev} = $res->{_rev};
+    # store in document register
+    my $register = $self->type . 's';
+    $self->collection->$register->{$self->name} = $self;
 
-    return $res;
+    return $self;
 }
 
 # delete

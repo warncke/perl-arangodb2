@@ -47,11 +47,11 @@ $database->create();
 $res = $collection->create();
 # create document
 $res = $document->create({test => "test"});
-ok($res->{_key}, "create: document created");
-is($res->{_key}, $document->name, "create: name set");
-is($res->{_rev}, $document->rev, "create: rev set");
+ok($res, "create: document created");
+ok($document->name, "create: name set");
+ok($document->rev, "create: rev set");
 is_deeply($document->data, {test => "test"}, "create: local data set");
-is($document, $collection->document($res->{_key}), "create: document registered");
+is($document, $collection->document($document->name), "create: document registered");
 # get document
 $res = $document->get();
 is_deeply($document->data, {test => "test"}, "get: local data set");

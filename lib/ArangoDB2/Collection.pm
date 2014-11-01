@@ -12,6 +12,7 @@ use JSON::XS;
 
 use ArangoDB2::Document;
 use ArangoDB2::Edge;
+use ArangoDB2::Index;
 
 my $JSON = JSON::XS->new->utf8;
 
@@ -50,6 +51,8 @@ sub count
 # create
 #
 # POST /_api/collection
+#
+# return self on success, undef on failure
 sub create
 {
     my($self, $args) = @_;
@@ -67,11 +70,13 @@ sub create
         $args->{type} = 2 if $args->{type} =~ m{doc}i;
     }
 
-    return $self->arango->http->post(
+    my $res = $self->arango->http->post(
         $self->api_path('collection'),
         undef,
         $JSON->encode($args),
-    );
+    ) or return;
+
+    return $self;
 }
 
 # delete
@@ -165,6 +170,37 @@ sub figures
         $self->api_path('collection', $self->name, 'figures'),
     );
 }
+
+# index
+#
+# get an ArangoDB::Index by name or create new empty instance
+sub index
+{
+    my($self, $name) = @_;
+
+    # if name then create/retrieve named instance
+    if (defined $name) {
+        return $self->indexes->{$name} ||= ArangoDB2::Index->new(
+            $self->arango,
+            $self->database,
+            $self,
+            $name,
+        );
+    }
+    # otherwise create a new empty instance
+    else {
+        return ArangoDB2::Index->new(
+            $self->arango,
+            $self->database,
+            $self,
+        );
+    }
+}
+
+# indexes
+#
+# register of ArangoDB2::Index objects by name
+sub indexes { $_[0]->{indexes} ||= {} }
 
 # info
 #
@@ -356,6 +392,10 @@ ArangoDB2::Collection - ArangoDB2 collection API methods
 =item edges
 
 =item figures
+
+=item index
+
+=item indexes
 
 =item info
 

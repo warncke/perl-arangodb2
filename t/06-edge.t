@@ -57,13 +57,13 @@ $doc2->create({test => "test"});
 $res = $edge->to($doc1)->from($doc2)->create(
     {test => "test"},
 );
-ok($res->{_key}, "create: edge created");
+ok($res, "create: edge created");
 ok($edge->to, "create: to set");
 ok($edge->from, "create: from set");
-is($res->{_key}, $edge->name, "create: name set");
-is($res->{_rev}, $edge->rev, "create: rev set");
+ok($edge->name, "create: name set");
+ok($edge->rev, "create: rev set");
 is_deeply($edge->data, {test => "test"}, "create: local data set");
-is($edge, $collection->edge($res->{_key}), "create: edge registered");
+is($edge, $collection->edge($edge->name), "create: edge registered");
 # get edges
 $res = $doc1->edges($collection);
 ok(@{$res->{edges}}, "edges");
