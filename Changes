@@ -1,5 +1,9 @@
 Revision history for ArangoDB2
 
+0.03    2014-11-01
+
+    * Add support for query/cursor API methods
+
 0.02    2014-10-31
 
     * Add support for edge API methods
