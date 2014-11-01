@@ -41,7 +41,42 @@ $database->create();
 $res = $collection->create();
 
 # create some data
+$collection->document->create({
+    city => "Portland",
+    state => "Oregon",
+    latitude => 45.527,
+    longitude => -122.683,
+});
+$collection->document->create({
+    city => "Vancouver",
+    state => "Washington",
+    latitude => 45.637,
+    longitude => -122.670,
+});
+$collection->document->create({
+    city => "Beaverton",
+    state => "Oregon",
+    latitude => 45.488,
+    longitude => -122.813,
+});
 
+# create hash index
+$res = $index->create({
+    type => "hash",
+    fields => ["city", "state"],
+});
+ok($res, "create hash index");
+ok($index->name, "create: name");
+ok($index->data, "create: data");
+# check list
+$res = $index->list;
+ok($res->{indexes}, "list");
+ok( ( grep { $_->{id} eq $index->id } @{$res->{indexes}} ), "index created" );
+# delete index
+$index->delete;
+# check list
+$res = $index->list;
+ok( !( grep { $_->{id} eq $index->id } @{$res->{indexes}} ), "index deleted" );
 
 
 # delete
