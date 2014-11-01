@@ -20,7 +20,21 @@ isa_ok($index, 'ArangoDB2::Index');
 # test required methods
 my @methods = qw(
     new
+    byteSize
+    constraint
+    create
+    delete
+    fields
+    geoJson
     get
+    id
+    ignoreNull
+    isNewlyCreated
+    list
+    minLength
+    size
+    type
+    unique
 );
 
 for my $method (@methods) {

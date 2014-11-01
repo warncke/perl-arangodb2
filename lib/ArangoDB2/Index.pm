@@ -14,7 +14,7 @@ use JSON::XS;
 # are returned when creating/getting index
 our @PARAMS = qw(
     byteSize constraint fields geoJson id ignoreNull
-    isNewlyCreated type minLength unique size
+    isNewlyCreated minLength size type unique
 );
 
 my $JSON = JSON::XS->new->utf8;
@@ -312,15 +312,35 @@ ArangoDB2::Index - ArangoDB2 index API methods
 
 =item new
 
+=item byteSize
+
+=item constraint
+
 =item create
 
 =item delete
+
+=item fields
+
+=item geoJson
 
 =item get
 
 =item id
 
+=item ignoreNull
+
+=item isNewlyCreated
+
 =item list
+
+=item minLength
+
+=item size
+
+=item type
+
+=item unique
 
 =back
 
