@@ -72,11 +72,6 @@ sub create
     return $res;
 }
 
-# data
-#
-# ref to hash containing document data
-sub data { $_[0]->{data} ||= {} }
-
 # delete
 #
 # DELETE /_api/document/{document-handle}

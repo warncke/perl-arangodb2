@@ -9,10 +9,10 @@ use Scalar::Util qw(weaken);
 
 # new
 #
-# Arango organizes data hierarchically as: Databases > Collections > Documents
+# Arango organizes data hierarchically: Databases > Collections > Documents
 #
-# This constructor can build ArangoDB2::Database, Collection, and Document objects
-# which all follow the same pattern
+# This constructor can build ArangoDB2::Database, Collection, Document, Edge,
+# and Query objects which all follow the same pattern
 sub new
 {
     my($class, $arango, $database, $collection, $document) = @_;
@@ -46,7 +46,14 @@ sub new
     }
     # otherwise if database has value it is a database
     elsif ($database) {
-        $self->{name} = $database;
+        if (ref $database) {
+            # prevent circular ref
+            weaken $database;
+            $self->{database} = $database;
+        }
+        else {
+            $self->{name} = $database;
+        }
     }
 
     return bless($self, $class);
@@ -76,6 +83,11 @@ sub arango { $_[0]->{arango} }
 #
 # parent Arango::DB collection instance
 sub collection { $_[0]->{collection} }
+
+# data
+#
+# ref to hash containing document data
+sub data { $_[0]->{data} ||= {} }
 
 # database
 #
@@ -107,6 +119,8 @@ ArangoDB2::Base - Base class for other ArangoDB2 objects
 =item arango
 
 =item collection
+
+=item data
 
 =item database
 

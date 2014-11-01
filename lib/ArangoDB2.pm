@@ -12,6 +12,7 @@ use ArangoDB2::Database;
 use ArangoDB2::HTTP;
 
 
+
 # new
 #
 # create new ArangoDB2 instance from string argument specifying

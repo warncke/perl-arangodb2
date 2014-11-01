@@ -12,6 +12,7 @@ use JSON::XS;
 use Scalar::Util qw(reftype);
 
 use ArangoDB2::Collection;
+use ArangoDB2::Query;
 
 my $JSON = JSON::XS->new->utf8;
 
@@ -100,6 +101,21 @@ sub list
     return $self->arango->http->get('/_api/database');
 }
 
+
+# query
+#
+# get a new ArangoDB2::Query object
+sub query {
+    my($self, $query) = @_;
+
+    return ArangoDB2::Query->new(
+        $self->arango,
+        $self,
+        $query
+    );
+}
+
+
 # user
 #
 # GET /_api/database/user
@@ -138,6 +154,8 @@ ArangoDB2::Database - ArangoDB2 database API methods
 =item delete
 
 =item list
+
+=item query
 
 =item user
 

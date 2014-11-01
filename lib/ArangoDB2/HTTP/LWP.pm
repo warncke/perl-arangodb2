@@ -178,9 +178,9 @@ sub response
 
     if ($response->is_success) {
         my $res = $JSON->decode($response->content);
-        # if there is a result object and no error then only
-        # return the result object
-        if ($res->{result} && !$res->{error}) {
+        # if there is a result object and no error and this is not a
+        # cursor result then only return the result object
+        if ($res->{result} && !$res->{error} && !defined $res->{hasMore}) {
             return $res->{result};
         }
         # otherwise return entire response
