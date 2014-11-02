@@ -13,6 +13,7 @@ use Scalar::Util qw(reftype);
 
 use ArangoDB2::Collection;
 use ArangoDB2::Query;
+use ArangoDB2::Transaction;
 
 my $JSON = JSON::XS->new->utf8;
 
@@ -109,7 +110,8 @@ sub list
 # query
 #
 # get a new ArangoDB2::Query object
-sub query {
+sub query
+{
     my($self, $query) = @_;
 
     return ArangoDB2::Query->new(
@@ -119,6 +121,18 @@ sub query {
     );
 }
 
+# transaction
+#
+# get a new ArangoDB2::Transaction object
+sub transaction
+{
+    my($self) = @_;
+
+    return ArangoDB2::Transaction->new(
+        $self->arango,
+        $self,
+    );
+}
 
 # user
 #
@@ -160,6 +174,8 @@ ArangoDB2::Database - ArangoDB2 database API methods
 =item list
 
 =item query
+
+=item transaction
 
 =item user
 
