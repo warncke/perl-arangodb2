@@ -21,7 +21,7 @@ my $JSON = JSON::XS->new->utf8;
 
 # collection
 #
-# named ArangoDB2::Collection object existing under this Database
+# get/create ArangoDB2::Collection object
 sub collection
 {
     my($self, $name) = @_;
@@ -38,7 +38,7 @@ sub collection
 
 # collections
 #
-# index of ArangoDB2::Collection objects belonging to this Database by name
+# index of ArangoDB2::Collection objects by name
 sub collections { $_[0]->{collections} ||= {} }
 
 # create
@@ -147,6 +147,11 @@ sub user
     return $self->arango->http->get('/_api/database/user');
 }
 
+# _class
+#
+# internal name for class
+sub _class { 'database' }
+
 1;
 
 __END__
@@ -170,6 +175,10 @@ ArangoDB2::Database - ArangoDB2 database API methods
 =item current
 
 =item delete
+
+=item graph
+
+=item graphs
 
 =item list
 

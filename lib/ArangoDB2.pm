@@ -102,6 +102,11 @@ sub version
     return $self->http->get('/_api/version');
 }
 
+# _class
+#
+# internal name for class
+sub _class { 'arango' }
+
 1;
 
 __END__

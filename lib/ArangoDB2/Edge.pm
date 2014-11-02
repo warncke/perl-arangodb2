@@ -98,10 +98,10 @@ sub to
     }
 }
 
-# type
+# _class
 #
-# type of document: either `document` or `edge`
-sub type { 'edge' }
+# internal name for class
+sub _class { 'edge' }
 
 1;
 
@@ -150,8 +150,6 @@ ArangoDB2::Document.
 =item replace
 
 =item rev
-
-=item type
 
 =back
 

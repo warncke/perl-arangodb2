@@ -360,6 +360,11 @@ sub unload
     );
 }
 
+# _class
+#
+# internal name for class
+sub _class { 'collection' }
+
 1;
 
 __END__

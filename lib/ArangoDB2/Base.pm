@@ -15,44 +15,23 @@ use Scalar::Util qw(weaken);
 # and Query objects which all follow the same pattern
 sub new
 {
-    my($class, $arango, $database, $collection, $document) = @_;
-    # arango object is always required
-    die "ArangoDB2 Object Required"
-        unless defined $arango;
-    # prevent circular ref
-    weaken $arango;
-    # create new instance
-    my $self = {arango => $arango};
-    # if collection has value then this might be a collection
-    # or a document
-    if ($collection) {
-        # if collection is a ref then this is a document
-        if (ref $collection) {
+    my $class = shift;
+    # new instance
+    my $self = {};
+    # process args
+    while (my $arg = shift) {
+        # if arg is a ref it should be another
+        # ArangoDB::* object
+        if (ref $arg) {
             # prevent circular ref
-            weaken $database;
-            weaken $collection;
-            $self->{database} = $database;
-            $self->{collection} = $collection;
-            $self->{name} = $document
-                if $document;
+            weaken $arg;
+            # create reference to parent object
+            $self->{$arg->_class} = $arg;
         }
-        # otherwise it is collection
+        # if arg is a string then it is the "name"
+        # of this object
         else {
-            # prevent circular ref
-            weaken $database;
-            $self->{database} = $database;
-            $self->{name} = $collection;
-        }
-    }
-    # otherwise if database has value it is a database
-    elsif ($database) {
-        if (ref $database) {
-            # prevent circular ref
-            weaken $database;
-            $self->{database} = $database;
-        }
-        else {
-            $self->{name} = $database;
+            $self->{name} = $arg;
         }
     }
 
