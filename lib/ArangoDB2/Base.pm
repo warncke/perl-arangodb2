@@ -97,7 +97,16 @@ sub database { $_[0]->{database} }
 # name
 #
 # name/handle of object
-sub name { $_[0]->{name} }
+sub name {
+    my($self, $name) = @_;
+
+    if (defined $name) {
+        $self->{name} = $name;
+        return $self;
+    }
+
+    return $self->{name};
+}
 
 1;
 
