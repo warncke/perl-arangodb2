@@ -43,7 +43,7 @@ sub new
 # the path and any args passed
 sub delete
 {
-    my($self, $path, $args) = @_;
+    my($self, $path, $args, $raw) = @_;
     # get copy of ArangoDB API URI
     my $uri = $self->arango->uri->clone;
     # set path for request
@@ -52,6 +52,8 @@ sub delete
     $uri->query_form($args) if $args;
     # make request
     my $response = $self->lwp->delete($uri);
+    # do not process response if raw requested
+    return $response if $raw;
     # process response
     return $self->response($response);
 }
@@ -62,7 +64,7 @@ sub delete
 # the path and any args passed
 sub get
 {
-    my($self, $path, $args) = @_;
+    my($self, $path, $args, $raw) = @_;
     # get copy of ArangoDB API URI
     my $uri = $self->arango->uri->clone;
     # set path for request
@@ -71,6 +73,8 @@ sub get
     $uri->query_form($args) if $args;
     # make request
     my $response = $self->lwp->get($uri);
+    # do not process response if raw requested
+    return $response if $raw;
     # process response
     return $self->response($response);
 }
@@ -81,7 +85,7 @@ sub get
 # the path and any args passed
 sub head
 {
-    my($self, $path, $args) = @_;
+    my($self, $path, $args, $raw) = @_;
     # get copy of ArangoDB API URI
     my $uri = $self->arango->uri->clone;
     # set path for request
@@ -90,6 +94,8 @@ sub head
     $uri->query_form($args) if $args;
     # make request
     my $response = $self->lwp->head($uri);
+    # do not process response if raw requested
+    return $response if $raw;
     # return code
     return $response->code;
 }
@@ -105,7 +111,7 @@ sub lwp { $_[0]->{lwp} }
 # the path and any args passed
 sub patch
 {
-    my($self, $path, $args, $patch) = @_;
+    my($self, $path, $args, $patch, $raw) = @_;
     # get copy of ArangoDB API URI
     my $uri = $self->arango->uri->clone;
     # set path for request
@@ -117,6 +123,8 @@ sub patch
     $request->content($patch);
     # make request
     my $response = $self->lwp->request($request);
+    # do not process response if raw requested
+    return $response if $raw;
     # process response
     return $self->response($response);
 }
@@ -127,7 +135,7 @@ sub patch
 # the path and any args passed
 sub put
 {
-    my($self, $path, $args, $put) = @_;
+    my($self, $path, $args, $put, $raw) = @_;
     # get copy of ArangoDB API URI
     my $uri = $self->arango->uri->clone;
     # set path for request
@@ -141,6 +149,8 @@ sub put
         ? $self->lwp->put($uri, $put)
         # if put is string then put raw data
         : $self->lwp->put($uri, Content => $put);
+    # do not process response if raw requested
+    return $response if $raw;
     # process response
     return $self->response($response);
 }
@@ -151,7 +161,7 @@ sub put
 # the path and any args passed
 sub post
 {
-    my($self, $path, $args, $post) = @_;
+    my($self, $path, $args, $post, $raw) = @_;
     # get copy of ArangoDB API URI
     my $uri = $self->arango->uri->clone;
     # set path for request
@@ -165,6 +175,8 @@ sub post
         ? $self->lwp->post($uri, $post)
         # if post is string then post raw data
         : $self->lwp->post($uri, Content => $post);
+    # do not process response if raw requested
+    return $response if $raw;
     # process response
     return $self->response($response);
 }

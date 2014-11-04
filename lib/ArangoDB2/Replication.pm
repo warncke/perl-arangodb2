@@ -18,6 +18,62 @@ my $JSON = JSON::XS->new->utf8;
 # API METHODS #
 ###############
 
+# applierConfig
+#
+# GET /_api/replication/applier-config
+# PUT /_api/replication/applier-config
+sub applierConfig
+{
+    my($self, $args) = @_;
+    # process args
+    $args = $self->_build_args($args, ['configuration']);
+    # build path
+    my $path = $self->api_path('replication', 'applier-config');
+    # make request
+    return $args->{configuration}
+        ? $self->arango->http->put($path, $args)
+        : $self->arango->http->get($path);
+}
+
+# applierStart
+#
+# PUT /_api/replication/applier-start
+sub applierStart
+{
+    my($self, $args) = @_;
+    # process args
+    $args = $self->_build_args($args, ['from']);
+    # make request
+    return $self->arango->http->put(
+        $self->api_path('replication', 'applier-start'),
+        $args,
+    );
+}
+
+# applierState
+#
+# GET /_api/replication/applier-state
+sub applierState
+{
+    my($self) = @_;
+    # make request
+    return $self->arango->http->get(
+        $self->api_path('replication', 'applier-state'),
+    );
+}
+
+# applierStop
+#
+# PUT /_api/replication/applier-stop
+sub applierStop
+{
+    my($self) = @_;
+    # make request
+    return $self->arango->http->get(
+        $self->api_path('replication', 'applier-stop'),
+    );
+}
+
 # clusterInventory
 #
 # GET /_api/replication/clusterInventory
@@ -60,6 +116,46 @@ sub inventory
     return $self->arango->http->get(
         $self->api_path('replication', 'inventory'),
         $args,
+    );
+}
+
+# loggerFollow
+#
+# GET /_api/replication/loggerFollow
+sub loggerFollow
+{
+    my($self, $args) = @_;
+    # process args
+    $args = $self->_build_args($args, ['chunkSize', 'from', 'to']);
+    # make request
+    my $res = $self->arango->http->get(
+        $self->api_path('replication', 'logger-follow'),
+        $args,
+        1, # get raw response
+    ) or return;
+    # build our own response
+    my $ret = {};
+    # response is newline separated JSON log entries
+    $ret->{log} = [ map { $JSON->decode($_) } split(/\n/, $res->content) ];
+
+    # get response header values
+    $ret->{replication}->{active} = $res->header('x-arango-replication-active');
+    $ret->{replication}->{checkmore} = $res->header('x-arango-replication-checkmore');
+    $ret->{replication}->{lastincluded} = $res->header('x-arango-replication-lastincluded');
+    $ret->{replication}->{lasttick} = $res->header('x-arango-replication-lasttick');
+
+    return $ret;
+}
+
+# loggerState
+#
+# GET /_api/replication/loggerState
+sub loggerState
+{
+    my($self) = @_;
+    # make request
+    return $self->arango->http->get(
+        $self->api_path('replication', 'logger-state'),
     );
 }
 
@@ -145,6 +241,41 @@ ArangoDB2::Replication - ArangoDB replication API methods
 
 =over 4
 
+=item applierConfig
+
+GET /_api/replication/applier-config
+PUT /_api/replication/applier-config
+
+Returns the configuration of the replication applier or sets the configuration of the replication applier.
+
+Parameters:
+
+    configuration
+
+=item applierStart
+
+PUT /_api/replication/applier-start
+
+Starts the replication applier.
+
+Parameters:
+
+    from
+
+=item applierState
+
+GET /_api/replication/applier-state
+
+Returns the state of the replication applier, regardless of whether the applier is currently running or not.
+
+=item applierStop
+
+PUT /_api/replication/applier-stop
+
+Stops the replication applier.
+
+
+
 =item clusterInventory
 
 GET /_api/replication/clusterInventory
@@ -178,6 +309,22 @@ Returns the list of collections and indexes available on the server. This list c
 Parameters:
 
     includeSystem
+
+=item loggerFollow
+
+GET /_api/replication/logger-follow
+
+Parameters:
+
+    chunkSize
+    from
+    to
+
+=item loggerState
+
+GET /_api/replication/logger-state
+
+Returns the current state of the server's replication logger.
 
 =item serverId
 

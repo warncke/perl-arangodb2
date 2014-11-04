@@ -16,9 +16,15 @@ my $replication = $database->replication;
 
 # test required methods
 my @api_methods = qw(
+    applierConfig
+    applierStart
+    applierState
+    applierStop
     clusterInventory
     dump
     inventory
+    loggerFollow
+    loggerState
     serverId
     sync
 );
@@ -56,6 +62,16 @@ ok($replication->serverId, "serverId");
 # ok($replication->clusterInventory, "clusterInventory");
 # ok($replication->dump, "dump");
 # ok($replication->sync, "sync");
+
+ok($replication->loggerFollow, "loggerFollow");
+ok($replication->loggerState, "loggerState");
+
+ok($replication->applierConfig, "applierConfig");
+ok($replication->applierState, "applierState");
+
+# need cluster set up to test these
+# ok($replication->applierStart, "applierStart");
+# ok($replication->applierStop, "applierStop");
 
 # delete database
 $database->delete;
