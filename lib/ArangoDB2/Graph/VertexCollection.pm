@@ -122,7 +122,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB2::Graph::VertexCollection - ArangoDB2 vertex collection API methods
+ArangoDB2::Graph::VertexCollection - ArangoDB vertex collection API methods
 
 =head1 DESCRIPTION
 

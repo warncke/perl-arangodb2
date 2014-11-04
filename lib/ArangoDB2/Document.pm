@@ -266,7 +266,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB2::Document - ArangoDB2 document API methods
+ArangoDB2::Document - ArangoDB document API methods
 
 =head1 METHODS
 

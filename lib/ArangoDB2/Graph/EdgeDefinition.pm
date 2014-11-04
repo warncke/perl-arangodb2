@@ -160,7 +160,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB2::Graph::EdgeDefinition - ArangoDB2 edge collection API methods
+ArangoDB2::Graph::EdgeDefinition - ArangoDB edge collection API methods
 
 =head1 DESCRIPTION
 

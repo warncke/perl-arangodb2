@@ -190,7 +190,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB2::Graph - ArangoDB2 graph API methods
+ArangoDB2::Graph - ArangoDB graph API methods
 
 =head1 DESCRIPTION
 

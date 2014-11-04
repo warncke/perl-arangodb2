@@ -183,7 +183,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB2::Database - ArangoDB2 database API methods
+ArangoDB2::Database - ArangoDB database API methods
 
 =head1 METHODS
 

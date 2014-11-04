@@ -172,7 +172,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB2::Index - ArangoDB2 index API methods
+ArangoDB2::Index - ArangoDB index API methods
 
 =head1 METHODS
 

@@ -32,7 +32,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB2::Admin - ArangoDB2 admin API methods
+ArangoDB2::Admin - ArangoDB admin API methods
 
 =head1 METHODS
 

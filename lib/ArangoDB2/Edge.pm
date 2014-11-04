@@ -48,7 +48,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB2::Edge - ArangoDB2 edge API methods
+ArangoDB2::Edge - ArangoDB edge API methods
 
 =head1 DESCRIPTION
 

@@ -117,7 +117,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB2::Query - ArangoDB2 query API methods
+ArangoDB2::Query - ArangoDB query API methods
 
 =head1 METHODS
 

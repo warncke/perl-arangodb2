@@ -148,7 +148,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB2::Cursor - ArangoDB2 cursor API methods
+ArangoDB2::Cursor - ArangoDB cursor API methods
 
 =head1 METHODS
 

@@ -60,7 +60,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB2::Transaction - ArangoDB2 transaction API methods
+ArangoDB2::Transaction - ArangoDB transaction API methods
 
 =head1 METHODS
 
