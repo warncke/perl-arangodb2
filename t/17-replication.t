@@ -19,6 +19,7 @@ my @api_methods = qw(
     clusterInventory
     dump
     inventory
+    serverId
     sync
 );
 
@@ -49,6 +50,7 @@ $database->delete();
 $database->create();
 
 ok($replication->inventory, "inventory");
+ok($replication->serverId, "serverId");
 
 # need cluster set up to test these
 # ok($replication->clusterInventory, "clusterInventory");

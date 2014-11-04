@@ -63,6 +63,18 @@ sub inventory
     );
 }
 
+# serverId
+#
+# GET /_api/replication/server-id
+sub serverId
+{
+    my($self) = @_;
+    # make request
+    return $self->arango->http->get(
+        $self->api_path('replication', 'server-id'),
+    );
+}
+
 # sync
 #
 # PUT /_api/replication/sync
@@ -166,6 +178,12 @@ Returns the list of collections and indexes available on the server. This list c
 Parameters:
 
     includeSystem
+
+=item serverId
+
+GET /_api/replication/server-id
+
+Returns the servers id. The id is also returned by other replication API methods, and this method is an easy means of determining a server's id.
 
 =item sync
 
