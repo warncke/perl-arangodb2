@@ -113,7 +113,7 @@ __END__
 
 =head1 NAME
 
-ArangoDB2 - ArangoDB HTTP API Interface
+ArangoDB2 - ArangoDB 2.x HTTP API Interface
 
 =head1 SYNOPSIS
 

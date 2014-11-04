@@ -14,6 +14,7 @@ use Scalar::Util qw(reftype);
 use ArangoDB2::Collection;
 use ArangoDB2::Graph;
 use ArangoDB2::Query;
+use ArangoDB2::Replication;
 use ArangoDB2::Transaction;
 
 my $JSON = JSON::XS->new->utf8;
@@ -141,6 +142,19 @@ sub query
     );
 }
 
+# replication
+#
+# get a new ArangoDB2::Replication object
+sub replication
+{
+    my($self) = @_;
+
+    return ArangoDB2::Replication->new(
+        $self->arango,
+        $self,
+    );
+}
+
 # transaction
 #
 # get a new ArangoDB2::Transaction object
@@ -208,6 +222,8 @@ ArangoDB2::Database - ArangoDB database API methods
 =item list
 
 =item query
+
+=item replication
 
 =item transaction
 
