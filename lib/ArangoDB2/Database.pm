@@ -16,6 +16,7 @@ use ArangoDB2::Graph;
 use ArangoDB2::Query;
 use ArangoDB2::Replication;
 use ArangoDB2::Transaction;
+use ArangoDB2::User;
 
 my $JSON = JSON::XS->new->utf8;
 
@@ -170,11 +171,25 @@ sub transaction
 
 # user
 #
+# ArangoDB2::User object
+sub user
+{
+    my($self, $name) = @_;
+
+    return ArangoDB2::User->new(
+        $self->arango,
+        $self,
+        $name,
+    );
+}
+
+# userDatabases
+#
 # GET /_api/database/user
 #
 # Retrieves the list of all databases the current user can access without specifying
 # a different username or password.
-sub user
+sub userDatabases
 {
     my($self) = @_;
 
@@ -228,6 +243,8 @@ ArangoDB2::Database - ArangoDB database API methods
 =item transaction
 
 =item user
+
+=item userDatabases
 
 =item users
 

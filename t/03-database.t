@@ -19,6 +19,7 @@ my @methods = qw(
     delete
     list
     user
+    userDatabases
 );
 
 for my $method (@methods) {
@@ -42,7 +43,7 @@ ok(defined $res->{id}, 'current: id');
 ok(defined $res->{path}, 'current: path');
 ok(defined $res->{isSystem}, 'current: isSystem');
 
-$res = $arango->database->user;
+$res = $arango->database->userDatabases;
 ok(@$res, "user: database list");
 
 $res = $arango->database->list;

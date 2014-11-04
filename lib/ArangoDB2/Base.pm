@@ -170,9 +170,14 @@ sub _build_self
         if exists $data->{_id};
     $self->{rev} = delete $data->{_rev}
         if exists $data->{_rev};
-    # copy _key to name
-    $self->{name} = delete $data->{_key}
-        if exists $data->{_key};
+    # if user is set then use it as name
+    if (exists $data->{user}) {
+        $self->{name} = delete $data->{user};
+    }
+    # otherwise try _key
+    elsif (exists $data->{_key}) {
+        $self->{name} = delete $data->{_key}
+    }
     # copy to and from
     $self->{from} = delete $data->{_from}
         if exists $data->{_from};
