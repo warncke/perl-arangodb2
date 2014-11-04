@@ -128,7 +128,19 @@ ArangoDB2::Traversal - ArangoDB traversal API methods
 
 =head1 DESCRIPTION
 
-=head1 METHODS
+=head1 API METHODS
+
+=over 4
+
+=item execute
+
+POST /_api/traversal
+
+Perform traversal.  Returns API response.
+
+=back
+
+=head1 PROPERTY METHODS
 
 =over 4
 
