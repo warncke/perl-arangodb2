@@ -3,12 +3,13 @@ package ArangoDB2;
 use strict;
 use warnings;
 
-our $VERSION = '0.07';
+our $VERSION = '0.09';
 
 use URI;
 
 use ArangoDB2::Admin;
 use ArangoDB2::Database;
+use ArangoDB2::Endpoint;
 use ArangoDB2::HTTP;
 
 
@@ -58,6 +59,16 @@ sub database
 #
 # Index of active ArangoDB2::Database objects by name
 sub databases { $_[0]->{databases} ||= {} }
+
+# endpoint
+#
+# ArangoDB2::Endpoint object
+sub endpoint
+{
+    my($self, $name) = @_;
+
+    return ArangoDB2::Endpoint->new($self, $name);
+}
 
 # http
 #
@@ -150,6 +161,8 @@ See the official docs for details on the API: L<https://docs.arangodb.com>
 =item database
 
 =item databases
+
+=item endpoint
 
 =item http
 

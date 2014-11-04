@@ -190,9 +190,13 @@ sub response
 
     if ($response->is_success) {
         my $res = $JSON->decode($response->content);
+        # res may be array in rare cases
+        if (!(ref $res eq 'HASH')) {
+            return $res;
+        }
         # if there is a result object and no error and this is not a
         # cursor result then only return the result object
-        if ( ($res->{result} || $res->{graph} || $res->{graphs})
+        elsif ( ($res->{result} || $res->{graph} || $res->{graphs})
                 && !$res->{error} && !defined $res->{hasMore} )
         {
             return $res->{result} || $res->{graph} || $res->{graphs};

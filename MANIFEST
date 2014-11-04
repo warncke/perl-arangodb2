@@ -8,6 +8,7 @@ lib/ArangoDB2/Cursor.pm
 lib/ArangoDB2/Database.pm
 lib/ArangoDB2/Document.pm
 lib/ArangoDB2/Edge.pm
+lib/ArangoDB2/Endpoint.pm
 lib/ArangoDB2/Graph.pm
 lib/ArangoDB2/Graph/Edge.pm
 lib/ArangoDB2/Graph/EdgeDefinition.pm
@@ -20,6 +21,7 @@ lib/ArangoDB2/Query.pm
 lib/ArangoDB2/Replication.pm
 lib/ArangoDB2/Transaction.pm
 lib/ArangoDB2/Traversal.pm
+lib/ArangoDB2/User.pm
 Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
@@ -42,6 +44,8 @@ t/14-graph-vertex.t
 t/15-graph-vertex.t
 t/16-traversal.t
 t/17-replication.t
+t/18-user.t
+t/19-endpoint.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
