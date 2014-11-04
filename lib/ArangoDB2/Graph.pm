@@ -12,6 +12,7 @@ use JSON::XS;
 
 use ArangoDB2::Graph::EdgeDefinition;
 use ArangoDB2::Graph::VertexCollection;
+use ArangoDB2::Traversal;
 
 my $JSON = JSON::XS->new->utf8;
 
@@ -135,6 +136,20 @@ sub list
 # get/set orphanCollections
 sub orphanCollections { shift->_get_set('orphanCollections', @_) }
 
+# traversal
+#
+# get a new ArangoDB2::Traversal object
+sub traversal
+{
+    my($self) = @_;
+
+    return ArangoDB2::Traversal->new(
+        $self->arango,
+        $self->database,
+        $self,
+    );
+}
+
 # vertexCollection
 #
 # return ArangoDB2::Graph::VertexCollection object
@@ -206,6 +221,8 @@ intuitive this is named "Graph" instead of "Gharial."
 =item list
 
 =item orphanCollections
+
+=item traversal
 
 =item vertex
 

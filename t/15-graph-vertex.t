@@ -60,7 +60,7 @@ $graph = $database->graph("myGraph")->create({
     ],
 });
 
-# create some vertexes
+# create some vertices
 my $vertex1 = $graph->vertexCollection("foo")->vertex->create({test => 1});
 ok($vertex1, "vertex created");
 my $vertex2 = $graph->vertexCollection("foo")->vertex->create({test => 2});

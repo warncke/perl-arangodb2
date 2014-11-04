@@ -22,10 +22,10 @@ my @methods = qw(
     delete
     get
     keepNull
+    new
     patch
     replace
     waitForSync
-    new
 );
 
 for my $method (@methods) {
