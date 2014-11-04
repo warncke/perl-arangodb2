@@ -17,6 +17,7 @@ lib/ArangoDB2/HTTP.pm
 lib/ArangoDB2/HTTP/LWP.pm
 lib/ArangoDB2/Index.pm
 lib/ArangoDB2/Query.pm
+lib/ArangoDB2/Replication.pm
 lib/ArangoDB2/Transaction.pm
 lib/ArangoDB2/Traversal.pm
 Makefile.PL
@@ -40,6 +41,7 @@ t/13-graph-edge-definition.t
 t/14-graph-vertex.t
 t/15-graph-vertex.t
 t/16-traversal.t
+t/17-replication.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
