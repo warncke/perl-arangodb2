@@ -81,13 +81,21 @@ $res = $index->create({
 });
 ok($res, "create hash index");
 ok($index->name, "create: name");
-ok($index->data, "create: data");
+
 # check list
 $res = $index->list;
 ok($res->{indexes}, "list");
 ok( ( grep { $_->{id} eq $index->id } @{$res->{indexes}} ), "index created" );
+
+# get index
+$index = $collection->index->get({name => $index->name});
+ok($index, "get index");
+ok($index->name, "index: name");
+ok($index->id, "index: id");
+
 # delete index
 $index->delete;
+
 # check list
 $res = $index->list;
 ok( !( grep { $_->{id} eq $index->id } @{$res->{indexes}} ), "index deleted" );

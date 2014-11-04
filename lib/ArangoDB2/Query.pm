@@ -32,35 +32,13 @@ sub new
 # batchSize
 #
 # maximum number of result documents
-sub batchSize
-{
-    my($self, $batchSize) = @_;
-
-    if (defined $batchSize) {
-        $self->{batchSize} = $batchSize;
-        return $self;
-    }
-
-    return $self->{batchSize};
-}
+sub batchSize { shift->_get_set('batchSize', @_) }
 
 # count
 #
 # boolean flag that indicates whether the number of documents in the
 # result set should be returned.
-#
-# default false
-sub count
-{
-    my($self, $count) = @_;
-
-    if (defined $count) {
-        $self->{count} = $count ? JSON::XS::true : JSON::XS::false;
-        return $self;
-    }
-
-    return $self->{count};
-}
+sub count { shift->_get_set_bool('count', @_) }
 
 # execute
 #
@@ -68,44 +46,24 @@ sub count
 sub execute
 {
     my($self, $bind, $args) = @_;
-    # set default args
-    $bind ||= {};
-    $args ||= {};
-    # require valid args
-    die 'Invalid Args'
-        unless ref $bind eq 'HASH'
-        and ref $args eq 'HASH';
-    # use ArangoDB2::Query properties for args unless args are set
-    for my $arg ( qw(batchSize count ttl) ) {
-        next unless $self->$arg;
-        $args->{$arg} = $self->$arg
-            unless defined $args->{$arg};
-    }
-    # populate options from ArangoDB2::Query properties
-    for my $arg ( qw(fullCount) ) {
-        next unless defined $self->$arg;
-        $args->{options} ||= {};
-        $args->{options}->{$arg} = $self->$arg
-            unless defined $args->{options}->{$arg};
-    }
+    # process args
+    $args = $self->_build_args($args, [qw(
+        batchSize fullCount count query ttl
+    )]);
+    # fullCount is an exception that belongs under options
+    $args->{options}->{fullCount} = delete $args->{fullCount}
+        if exists $args->{fullCount};
     # set bindVars if bind is passed
     $args->{bindVars} = $bind
         if defined $bind;
-    # set query string
-    $args->{query} = $self->query;
-    # perform query which returns a cursor if successful
+    # make request
     my $res = $self->arango->http->post(
         $self->api_path('cursor'),
         undef,
         $JSON->encode($args),
-    );
-    # query was successful
-    if ($res) {
-        return ArangoDB2::Cursor->new($self->arango, $self->database, $res);
-    }
-    else {
-        return;
-    }
+    ) or return;
+
+    return ArangoDB2::Cursor->new($self->arango, $self->database, $res);
 }
 
 # fullCount
@@ -113,17 +71,7 @@ sub execute
 # include result count greater than LIMIT
 #
 # default false
-sub fullCount
-{
-    my($self, $fullCount) = @_;
-
-    if (defined $fullCount) {
-        $self->{fullCount} = $fullCount ? JSON::XS::true : JSON::XS::false;
-        return $self;
-    }
-
-    return $self->{fullCount};
-}
+sub fullCount { shift->_get_set_bool('fullCount', @_) }
 
 # explain
 #
@@ -156,31 +104,12 @@ sub parse
 # query
 #
 # AQL query
-sub query {
-    my($self, $query) = @_;
-
-    if (defined $query) {
-        $self->{query} = $query;
-        return $self;
-    }
-
-    return $self->{query};
-}
+sub query { shift->_get_set('query', @_) }
 
 # ttl
 #
 # an optional time-to-live for the cursor (in seconds)
-sub ttl
-{
-    my($self, $ttl) = @_;
-
-    if (defined $ttl) {
-        $self->{ttl} = $ttl;
-        return $self;
-    }
-
-    return $self->{ttl};
-}
+sub ttl { shift->_get_set('ttl', @_) }
 
 1;
 

@@ -16,20 +16,23 @@ use ArangoDB2::Index;
 
 my $JSON = JSON::XS->new->utf8;
 
+# params that can be set when creating collection
+my @PARAMS = qw(
+    doCompact isSystem isVolatile journalSize keyOptions name
+    numberOfShards shardKeys type waitForSync
+);
+
 
 
 # checksum
 #
 # GET /_api/collection/{collection-name}/checksum
-#
-# Query Parameters
-#
-# withRevisions: Whether or not to include document revision ids in the checksum calculation.
-# withData: Whether or not to include document body data in the checksum calculation.
 sub checksum
 {
     my($self, $args) = @_;
-
+    # process args
+    $args = $self->_build_args($args, ['withData','withRevisions']);
+    # make request
     return $self->arango->http->get(
         $self->api_path('collection', $self->name, 'checksum'),
         $args,
@@ -38,15 +41,8 @@ sub checksum
 
 # count
 #
-# GET /_api/collection/{collection-name}/count
-sub count
-{
-    my($self) = @_;
-
-    return $self->arango->http->get(
-        $self->api_path('collection', $self->name, 'count'),
-    );
-}
+# get/set count
+sub count { shift->_get_set_bool('count', @_) }
 
 # create
 #
@@ -56,25 +52,16 @@ sub count
 sub create
 {
     my($self, $args) = @_;
-
-    # require hashref
-    $args ||= {};
-    die "invalid argument"
-        unless ref $args eq 'HASH';
-    # set name arg
-    $args->{name} = $self->name;
-
-    # allow type to be passed by name
-    if ($args->{type}) {
-        $args->{type} = 3 if $args->{type} =~ m{edge}i;
-        $args->{type} = 2 if $args->{type} =~ m{doc}i;
-    }
-
+    # process args
+    $args = $self->_build_args($args, \@PARAMS);
+    # make request
     my $res = $self->arango->http->post(
         $self->api_path('collection'),
         undef,
         $JSON->encode($args),
     ) or return;
+    # copy response data to instance
+    $self->_build_self($res, [@PARAMS, 'id']);
 
     return $self;
 }
@@ -125,6 +112,23 @@ sub document
 # register of ArangoDB2::Document objects by name (_key)
 sub documents { $_[0]->{documents} ||= {} }
 
+# documentCount
+#
+# GET /_api/collection/{collection-name}/count
+sub documentCount
+{
+    my($self) = @_;
+
+    return $self->arango->http->get(
+        $self->api_path('collection', $self->name, 'count'),
+    );
+}
+
+# doCompact
+#
+# get/set doCompact
+sub doCompact { shift->_get_set_bool('doCompact', @_) }
+
 # edge
 #
 # get a specific ArangoDB2::Edge by name (_key) or create a
@@ -158,6 +162,11 @@ sub edge
 #
 # register of ArangoDB2::Edge objects by name (_key)
 sub edges { $_[0]->{edges} ||= {} }
+
+# excludeSystem
+#
+# get/set excludeSystem
+sub excludeSystem { shift->_get_set_bool('excludeSystem', @_) }
 
 # figures
 #
@@ -214,17 +223,35 @@ sub info
     );
 }
 
+# isSystem
+#
+# get/set isSystem
+sub isSystem { shift->_get_set_bool('isSystem', @_) }
+
+# isVolatile
+#
+# get/set isVolatile
+sub isVolatile { shift->_get_set_bool('isVolatile', @_) }
+
+# journalSize
+#
+# get/set journalSize
+sub journalSize { shift->_get_set('journalSize', @_) }
+
+# keyOptions
+#
+# get/set keyOptions
+sub keyOptions { shift->_get_set('keyOptions', @_) }
+
 # list
 #
 # GET /_api/collection
-#
-# Query Parameters
-#
-# excludeSystem: Whether or not system collections should be excluded from the result.
 sub list
 {
     my($self, $args) = @_;
-
+    # process args
+    $args = $self->_build_args($args, ['excludeSystem']);
+    # make request
     return $self->arango->http->get(
         $self->api_path('collection'),
         $args,
@@ -234,20 +261,22 @@ sub list
 # load
 #
 # PUT /_api/collection/{collection-name}/load
-#
-# Query Parameters
-#
-# count: set false to disable counting of documents
 sub load
 {
     my($self, $args) = @_;
-
+    # process args
+    $args = $self->_build_args($args, ['count']);
+    # make request
     return $self->arango->http->put(
         $self->api_path('collection', $self->name, 'load'),
         $args,
     );
 }
 
+# numberOfShards
+#
+# get/set numberOfShards
+sub numberOfShards { shift->_get_set('numberOfShards', @_) }
 
 # properties
 #
@@ -256,42 +285,35 @@ sub load
 # or
 #
 # PUT /_api/collection/{collection-name}/properties
-#
-# Params
-#
-# waitForSync: If true then creating or changing a document will wait until the data has been synchronised to disk.
-# journalSize: Size (in bytes) for new journal files that are created for the collection.
 sub properties
 {
     my($self, $args) = @_;
-
+    # process args
+    $args = $self->_build_args($args, ['journalSize', 'waitForSync']);
+    # build path
     my $path = $self->api_path('collection', $self->name, 'properties');
-
-    # need to use true / false bool values
-    if ( $args && exists $args->{waitForSync} ) {
-        $args->{waitForSync} = $args->{waitForSync} ? JSON::XS::true : JSON::XS::false;
-    }
-
-    return $args
+    # make request
+    my $res = %$args
         # if args are passed then set with PUT
         ? $self->arango->http->put($path, undef, $JSON->encode($args))
         # otherwise get properties
         : $self->arango->http->get($path);
+    # copy response data to instance
+    $self->_build_self($res, \@PARAMS);
+
+    return $self;
 }
 
 # rename
 #
 # PUT /_api/collection/{collection-name}/rename
-#
-# Params
-#
-# name: new name
 sub rename
 {
     my($self, $args) = @_;
-
+    # make a copy of current name
     my $old_name = $self->name;
-    my $new_name = $args->{name};
+    # process args
+    $args = $self->_build_args($args, ['name']);
 
     my $res = $self->arango->http->put(
         $self->api_path('collection', $self->name, 'rename'),
@@ -300,16 +322,16 @@ sub rename
     );
 
     # if rename successful apply changes locally
-    if ($res && $res->{name} eq $new_name) {
+    if ($res && $res->{name} eq $args->{name}) {
         # change internal name
-        $self->{name} = $new_name;
-        # delete old name from ArangoDB2::Database register
+        $self->name($res->{name});
+        # unregister old name
         delete $self->database->collections->{$old_name};
-        # set new name in ArangoDB2::Database register
-        $self->database->collections->{$new_name} = $self;
+        # register new name
+        $self->database->collections->{ $res->{name} } = $self;
     }
 
-    return $res;
+    return $self;
 }
 
 # revision
@@ -336,6 +358,11 @@ sub rotate
     );
 }
 
+# shardKeys
+#
+# get/set shardKeys
+sub shardKeys { shift->_get_set('shardKeys', @_) }
+
 # truncate
 #
 # PUT /_api/collection/{collection-name}/truncate
@@ -348,6 +375,11 @@ sub truncate
     );
 }
 
+# type
+#
+# get/set type
+sub type { shift->_get_set('type', @_) }
+
 # unload
 #
 # PUT /_api/collection/{collection-name}/unload
@@ -359,6 +391,21 @@ sub unload
         $self->api_path('collection', $self->name, 'unload'),
     );
 }
+
+# waitForSync
+#
+# get/set waitForSync
+sub waitForSync { shift->_get_set_bool('waitForSync', @_) }
+
+# withData
+#
+# get/set withData
+sub withData { shift->_get_set_bool('withData', @_) }
+
+# withRevisions
+#
+# get/set withRevisions
+sub withRevisions { shift->_get_set_bool('withRevisions', @_) }
 
 # _class
 #
@@ -392,9 +439,15 @@ ArangoDB2::Collection - ArangoDB2 collection API methods
 
 =item documents
 
+=item documentCount
+
+=item doCompact
+
 =item edge
 
 =item edges
+
+=item excludeSystem
 
 =item figures
 
@@ -404,9 +457,19 @@ ArangoDB2::Collection - ArangoDB2 collection API methods
 
 =item info
 
+=item isSystem
+
+=item isVolatile
+
+=item journalSize
+
+=item keyOptions
+
 =item list
 
 =item load
+
+=item numberOfShards
 
 =item properties
 
@@ -416,9 +479,19 @@ ArangoDB2::Collection - ArangoDB2 collection API methods
 
 =item rotate
 
+=item shardKeys
+
 =item truncate
 
+=item type
+
 =item unload
+
+=item waitForSync
+
+=item withData
+
+=item withRevisions
 
 =back
 

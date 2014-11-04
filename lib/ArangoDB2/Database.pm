@@ -12,6 +12,7 @@ use JSON::XS;
 use Scalar::Util qw(reftype);
 
 use ArangoDB2::Collection;
+use ArangoDB2::Graph;
 use ArangoDB2::Query;
 use ArangoDB2::Transaction;
 
@@ -25,15 +26,22 @@ my $JSON = JSON::XS->new->utf8;
 sub collection
 {
     my($self, $name) = @_;
-    # require name
-    die "Collection name Required"
-        unless $name;
-    # only create one ArangoDB2::Collection instance per name
-    return $self->collections->{$name} ||= ArangoDB2::Collection->new(
-        $self->arango,
-        $self,
-        $name,
-    );
+
+    if (defined $name) {
+        # only create one ArangoDB2::Collection instance per name
+        return $self->collections->{$name} ||= ArangoDB2::Collection->new(
+            $self->arango,
+            $self,
+            $name,
+        );
+    }
+    else {
+        ArangoDB2::Collection->new(
+            $self->arango,
+            $self,
+            $name,
+        );
+    }
 }
 
 # collections
@@ -44,20 +52,12 @@ sub collections { $_[0]->{collections} ||= {} }
 # create
 #
 # POST /_api/database
-#
-# return self on success, undef on failure
 sub create
 {
     my($self, $args) = @_;
-
-    # require hashref
-    $args ||= {};
-    die "invalid argument"
-        unless ref $args
-        and reftype $args eq 'HASH';
-    # set name arg
-    $args->{name} = $self->name;
-
+    # process args
+    $args = $self->_build_args($args, ['name','users']);
+    # make request
     my $res = $self->arango->http->post(
         '/_api/database',
         undef,
@@ -70,13 +70,6 @@ sub create
 # current
 #
 # GET /_api/database/current
-#
-# The response is a JSON object with the following attributes:
-#
-# name: the name of the current database
-# id: the id of the current database
-# path: the filesystem path of the current database
-# isSystem: whether or not the current database is the _system database
 sub current
 {
     my($self) = @_;
@@ -93,6 +86,33 @@ sub delete
 
     return $self->arango->http->delete("/_api/database/".$self->name);
 }
+
+# graph
+#
+# get/create ArangoDB2::Graph object
+sub graph
+{
+    my($self, $name) = @_;
+
+    if (defined $name) {
+        return $self->graphs->{$name} ||= ArangoDB2::Graph->new(
+            $self->arango,
+            $self,
+            $name,
+        );
+    }
+    else {
+        return ArangoDB2::Graph->new(
+            $self->arango,
+            $self,
+        );
+    }
+}
+
+# graphs
+#
+# index of ArangoDB2::Graph objects by name
+sub graphs { $_[0]->{graphs} ||= {} }
 
 # list
 #
@@ -147,6 +167,11 @@ sub user
     return $self->arango->http->get('/_api/database/user');
 }
 
+# users
+#
+# get/set users
+sub users { shift->_get_set('users', @_) }
+
 # _class
 #
 # internal name for class
@@ -187,6 +212,8 @@ ArangoDB2::Database - ArangoDB2 database API methods
 =item transaction
 
 =item user
+
+=item users
 
 =back
 

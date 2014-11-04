@@ -1,4 +1,4 @@
-package ArangoDB2::Document;
+package ArangoDB2::Graph::Vertex;
 
 use strict;
 use warnings;
@@ -16,14 +16,7 @@ my $JSON = JSON::XS->new->utf8;
 
 # create
 #
-# POST /_api/document
-#
-# Query Parameters
-#
-# collection: The collection name.
-# createCollection: If this parameter has a value of true or yes, then the collection is created if it does not yet exist. Other values will be ignored so the collection must be present for the operation to succeed.
-#
-# return self on success, undef on failure
+# POST /_api/gharial/graph-name/vertex/collection-name
 sub create
 {
     my($self, $data, $args) = @_;
@@ -31,93 +24,66 @@ sub create
     die "Invlalid args"
         unless ref $data eq 'HASH';
     # process args
-    $args = $self->_build_args($args, ['createCollection','waitForSync']);
-    # set collection name as query param
-    $args->{collection} = $self->collection->name;
+    $args = $self->_build_args($args, ['waitForSync']);
     # make request
     my $res = $self->arango->http->post(
-        $self->api_path($self->_class),
+        $self->api_path('gharial', $self->graph->name, $self->_class, $self->collection->name),
         $args,
         $JSON->encode($data),
     ) or return;
+    # get response data
+    $res = $res->{$self->_class}
+        or return;
     # copy response data to instance
     $self->_build_self($res, []);
     # set data pointer to passed in doc, which will
     # be updated by future object ops
     $self->{data} = $data;
-    # register
+    # register object
     my $register = $self->_register;
     $self->collection->$register->{$self->name} = $self;
 
     return $self;
 }
 
-# createCollection
-#
-# get/set createCollection
-sub createCollection { shift->_get_set_bool('createCollection', @_) }
-
 # delete
 #
-# DELETE /_api/document/{document-handle}
+# DELETE /system/gharial/graph-name/vertex/collection-name/vertex-key
 sub delete
 {
     my($self, $args) = @_;
     # process args
-    $args = $self->_build_args($args, ['policy', 'rev', 'waitForSync']);
+    $args = $self->_build_args($args, ['name', 'waitForSync']);
     # make request
     my $res = $self->arango->http->delete(
-        $self->api_path($self->_class, $self->collection->name, $self->name),
-        $args,
+        $self->api_path('gharial', $self->graph->name, $self->_class, $self->collection->name, delete $args->{name}),
     ) or return;
     # empty data
     if (my $data = $self->data) {
         %$data = ();
     }
-    # unregister
+    # unregister object
     my $register = $self->_register;
     delete $self->collection->$register->{$self->name};
 
     return $res;
 }
 
-# edges
-#
-# GET /_api/edges/{collection-id}
-#
-# even though this is under the edge API it is the edges for a document
-# so it makes more since for this to be a method on the document that the
-# edges are being retrieved for.
-#
-# the edges method must be called with the edge collection that the edges
-# are being retrieved from.
-sub edges
-{
-    my($self, $collection, $args) = @_;
-    # set default args
-    $args ||= {};
-    # require valid args
-    die 'Invalid Args'
-        unless ref $args eq 'HASH';
-    # get the edges from this document
-    $args->{vertex} = join('/', $self->collection->name, $self->name);
-
-    return $self->arango->http->get(
-        $self->api_path('edges', $collection->name),
-        $args,
-    );
-}
-
 # get
 #
-# GET /_api/document/{document-handle}
+# GET /system/gharial/graph-name/vertex/collection-name/vertex-key
 sub get
 {
-    my($self) = @_;
+    my($self, $args) = @_;
+    # process args
+    $args = $self->_build_args($args, ['data', 'name']);
     # make request
     my $res = $self->arango->http->get(
-        $self->api_path($self->_class, $self->collection->name, $self->name),
+        $self->api_path('gharial', $self->graph->name, $self->_class, $self->collection->name, delete $args->{name}),
     ) or return;
+    # get response data
+    $res = $res->{$self->_class}
+        or return;
     # copy response data to instance
     $self->_build_self($res, []);
     # if data is defined already then empty and copy data from response
@@ -133,21 +99,7 @@ sub get
     my $register = $self->_register;
     $self->collection->$register->{$self->name} = $self;
 
-    return $res;
-}
-
-# head
-#
-# HEAD /_api/document/{document-handle}
-sub head
-{
-    my($self) = @_;
-
-    my $res = $self->arango->http->head(
-        $self->api_path($self->_class, $self->collection->name, $self->name),
-    );
-
-    return $res;
+    return $self;
 }
 
 # keepNull
@@ -155,36 +107,26 @@ sub head
 # get/set keepNull
 sub keepNull { shift->_get_set_bool('keepNull', @_) }
 
-# list
-#
-# GET /_api/document
-sub list
-{
-    my($self, $args) = @_;
-    # process args
-    $args = $self->_build_args($args, ['type']);
-    $args->{collection} = $self->collection->name;
-    # make request
-    return $self->arango->http->get(
-        $self->api_path($self->_class),
-        $args
-    );
-}
-
 # patch
 #
-# PATCH /_api/document/{document-handle}
+# PATCH /system/gharial/graph-name/vertex/collection-name/vertex-key
 sub patch
 {
     my($self, $data, $args) = @_;
+    # require data
+    die "Invalid args"
+        unless ref $data eq 'HASH';
     # process args
-    $args = $self->_build_args($args, ['keepNull', 'policy', 'waitForSync']);
+    $args = $self->_build_args($args, ['name', 'keepNull', 'waitForSync']);
     # make request
     my $res = $self->arango->http->patch(
-        $self->api_path($self->_class, $self->collection->name, $self->name),
+        $self->api_path('gharial', $self->graph->name, $self->_class, $self->collection->name, delete $args->{name}),
         $args,
         $JSON->encode($data),
     ) or return;
+    # get response data
+    $res = $res->{$self->_class}
+        or return;
     # copy response data to instance
     $self->_build_self($res, []);
     # if data is defined then copy patched data
@@ -202,25 +144,26 @@ sub patch
     return $self;
 }
 
-# policy
-#
-# get/set policy
-sub policy { shift->_get_set('policy', @_) }
-
 # replace
 #
-# PUT /_api/document/{document-handle}
+# PUT /system/gharial/graph-name/vertex/collection-name/vertex-key
 sub replace
 {
     my($self, $data, $args) = @_;
+    # require data
+    die "Invlalid args"
+        unless ref $data eq 'HASH';
     # process args
-    $args = $self->_build_args($args, ['policy', 'waitForSync']);
+    $args = $self->_build_args($args, ['name', 'waitForSync']);
     # make request
     my $res = $self->arango->http->put(
-        $self->api_path($self->_class, $self->collection->name, $self->name),
+        $self->api_path('gharial', $self->graph->name, $self->_class, $self->collection->name, delete $args->{name}),
         $args,
         $JSON->encode($data),
     ) or return;
+    # get response data
+    $res = $res->{$self->_class}
+        or return;
     # copy response data to instance
     $self->_build_self($res, []);
     # if data is defined then replace data
@@ -239,11 +182,6 @@ sub replace
     return $self;
 }
 
-# type
-#
-# get/set type
-sub type { shift->_get_set('type', @_) }
-
 # waitForSync
 #
 # get/set waitForSync
@@ -252,21 +190,25 @@ sub waitForSync { shift->_get_set_bool('waitForSync', @_) }
 # _class
 #
 # internal name for class
-sub _class { 'document' }
+sub _class { 'vertex' }
 
 # _register
 #
 # internal name for object index
-sub _register { 'documents' }
+sub _register { 'vertices' }
 
 1;
 
 __END__
 
-
 =head1 NAME
 
-ArangoDB2::Document - ArangoDB2 document API methods
+ArangoDB2::Graph::Vertex - ArangoDB vertex API methods
+
+=head1 DESCRIPTION
+
+Graph vertexes are really documents and so all of the access methods
+here are the same as ArangoDB::Document.
 
 =head1 METHODS
 
@@ -276,31 +218,15 @@ ArangoDB2::Document - ArangoDB2 document API methods
 
 =item create
 
-=item createCollection
-
-=item data
-
 =item delete
-
-=item edges
 
 =item get
 
-=item head
-
 =item keepNull
-
-=item list
 
 =item patch
 
-=item policy
-
 =item replace
-
-=item rev
-
-=item type
 
 =item waitForSync
 

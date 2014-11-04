@@ -21,51 +21,15 @@ my $JSON = JSON::XS->new->utf8;
 
 
 
-# new
-#
-# create new instance.  optionally try to get index by name.
-sub new
-{
-    my($class) = shift;
-    # call inherited constructor
-    my $self = $class->SUPER::new(@_);
-    # if a name arg was passed then try to get
-    $self->get if $self->name;
-
-    return $self;
-}
-
 # byteSize
 #
 # get/set byteSize
-sub byteSize
-{
-    my($self, $byteSize) = @_;
-
-    if (defined $byteSize) {
-        $self->{byteSize} = $byteSize;
-        return $self;
-    }
-    else {
-        return $self->{byteSize};
-    }
-}
+sub byteSize { shift->_get_set('byteSize', @_) }
 
 # constraint
 #
 # get/set constraint value
-sub constraint
-{
-    my($self, $constraint) = @_;
-
-    if (defined $constraint) {
-        $self->{constraint} = $constraint ? JSON::XS::true : JSON::XS::false;
-        return $self;
-    }
-    else {
-        return $self->{constraint};
-    }
-}
+sub constraint { shift->_get_set_bool('constraint', @_) }
 
 # create
 #
@@ -73,36 +37,25 @@ sub constraint
 sub create
 {
     my($self, $index, $args) = @_;
-    # set default args
-    $index ||= {};
-    $args ||= {};
-    # require valid args
-    die 'Invalid Args'
-        unless ref $index eq 'HASH'
-        and ref $args eq 'HASH';
+    # require index
+    die "Invalid Args"
+        unless ref $index eq 'HASH';
+    # process args
+    $args = $self->_build_args($args, \@PARAMS);
     # set collection name
     $args->{collection} = $self->collection->name;
-    # set args
-    for my $arg (@PARAMS) {
-        # if the arg was passed then set it
-        $self->$arg($args->{$args});
-        # use the set value if set
-        $args->{$arg} = $self->$arg
-            if defined $self->$arg;
-    }
-
+    # make request
     my $res = $self->arango->http->post(
         $self->api_path('index'),
         $args,
         $JSON->encode($index),
     ) or return;
-
     # get name from id
     my($name) = $res->{id} =~ m{/(\d+)$}
         or return;
     $self->{name} = $name;
-    # copy properties from response
-    do { $self->{$_} = $res->{$_} if exists $res->{$_} } for @PARAMS;
+    # copy response data to instance
+    $self->_build_self($res, \@PARAMS);
     # register
     $self->collection->indexes->{$name} = $self;
 
@@ -115,11 +68,10 @@ sub create
 sub delete
 {
     my($self) = @_;
-
+    # make request
     my $res = $self->arango->http->delete(
         $self->api_path('index', $self->id),
     ) or return;
-
     # remove from register
     delete $self->collection->indexes->{$self->name};
 
@@ -129,85 +81,45 @@ sub delete
 # fields
 #
 # get/set fields
-sub fields
-{
-    my($self, $fields) = @_;
-
-    if (defined $fields) {
-        $self->{fields} = $fields;
-        return $self;
-    }
-    else {
-        return $self->{fields};
-    }
-}
+sub fields { shift->_get_set('fields', @_) }
 
 # geoJson
 #
 # get/set geoJson value
-sub geoJson
-{
-    my($self, $geoJson) = @_;
-
-    if (defined $geoJson) {
-        $self->{geoJson} = $geoJson ? JSON::XS::true : JSON::XS::false;
-        return $self;
-    }
-    else {
-        return $self->{geoJson};
-    }
-}
+sub geoJson { shift->_get_set_bool('geoJson', @_) }
 
 # get
 #
 # GET /_api/index/{index-handle}
 sub get
 {
-    my($self, $name) = @_;
-    # name arg is optional.  If name is already set then
-    # object will morph into the new name.
-    $self->{name} = $name
-        if defined $name;
-
+    my($self, $args) = @_;
+    # process args
+    $args = $self->_build_args($args, ['name']);
+    # use either id or name
+    my $id = $self->id
+        ? $self->id
+        :  join('/', $self->collection->name, delete $args->{name});
+    # make request
     my $res = $self->arango->http->get(
-        $self->api_path('index', $self->id),
-    );
+        $self->api_path('index', $id),
+    ) or return;
+    # get name from id
+    my($name) = $res->{id} =~ m{/(\d+)$}
+        or return;
+    $self->{name} = $name;
+    # copy response data to instance
+    $self->_build_self($res, \@PARAMS);
+    # register
+    $self->collection->indexes->{$name} = $self;
 
-    # copy properties from response
-    $self->{$_} = $res->{$_} for @PARAMS;
-
-    return $res;
-}
-
-# id
-#
-# get index id
-sub id
-{
-    my($self) = @_;
-
-    return defined $self->{id}
-        ? $self->{id}
-        : $self->name
-            ? join('/', $self->collection->name, $self->name)
-            : undef;
+    return $self;
 }
 
 # ignoreNull
 #
 # get/set ignoreNull value
-sub ignoreNull
-{
-    my($self, $ignoreNull) = @_;
-
-    if (defined $ignoreNull) {
-        $self->{ignoreNull} = $ignoreNull ? JSON::XS::true : JSON::XS::false;
-        return $self;
-    }
-    else {
-        return $self->{ignoreNull};
-    }
-}
+sub ignoreNull { shift->_get_set_bool('ignoreNull', @_) }
 
 # isNewlyCreated
 #
@@ -237,66 +149,22 @@ sub list
 # minLength
 #
 # get/set minLength
-sub minLength
-{
-    my($self, $minLength) = @_;
-
-    if (defined $minLength) {
-        $self->{minLength} = $minLength;
-        return $self;
-    }
-    else {
-        return $self->{minLength};
-    }
-}
+sub minLength { shift->_get_set('minLength', @_) }
 
 # size
 #
 # get/set size
-sub size
-{
-    my($self, $size) = @_;
-
-    if (defined $size) {
-        $self->{size} = $size;
-        return $self;
-    }
-    else {
-        return $self->{size};
-    }
-}
+sub size { shift->_get_set('size', @_) }
 
 # type
 #
 # get/set type
-sub type
-{
-    my($self, $type) = @_;
-
-    if (defined $type) {
-        $self->{type} = $type;
-        return $self;
-    }
-    else {
-        return $self->{type};
-    }
-}
+sub type { shift->_get_set('type', @_) }
 
 # unique
 #
 # get/set unique value
-sub unique
-{
-    my($self, $unique) = @_;
-
-    if (defined $unique) {
-        $self->{unique} = $unique ? JSON::XS::true : JSON::XS::false;
-        return $self;
-    }
-    else {
-        return $self->{unique};
-    }
-}
+sub unique { shift->_get_set_bool('unique', @_) }
 
 1;
 

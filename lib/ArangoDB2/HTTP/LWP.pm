@@ -180,8 +180,10 @@ sub response
         my $res = $JSON->decode($response->content);
         # if there is a result object and no error and this is not a
         # cursor result then only return the result object
-        if ($res->{result} && !$res->{error} && !defined $res->{hasMore}) {
-            return $res->{result};
+        if ( ($res->{result} || $res->{graph} || $res->{graphs})
+                && !$res->{error} && !defined $res->{hasMore} )
+        {
+            return $res->{result} || $res->{graph} || $res->{graphs};
         }
         # otherwise return entire response
         else {

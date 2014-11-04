@@ -1,5 +1,10 @@
 Revision history for ArangoDB2
 
+0.05    2014-11-04
+    * Add support for transaction API methods
+    * Add support for graph API methods
+    * major refactor and cleanup
+
 0.04    2014-11-01
 
     * Add support for index API methods

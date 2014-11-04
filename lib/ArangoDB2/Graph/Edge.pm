@@ -1,24 +1,31 @@
-package ArangoDB2::Edge;
+package ArangoDB2::Graph::Edge;
 
 use strict;
 use warnings;
 
 use base qw(
-    ArangoDB2::Document
+    ArangoDB2::Graph::Vertex
 );
 
+use Data::Dumper;
+use JSON::XS;
+
+my $JSON = JSON::XS->new->utf8;
 
 
-# create
-#
-# override ArangoDB2::Document create so that we can add from
-# and to values to the request
+# POST /_api/gharial/graph-name/edge/collection-name
 sub create
 {
     my($self, $data, $args) = @_;
+    # require data
+    die "Invlalid args"
+        unless ref $data eq 'HASH';
     # process args
-    $args = $self->_build_args($args, ['from','to']);
-    # call ArangoDB2::Document::create
+    $args = $self->_build_args($args, ['from', 'to']);
+    # from and to go in data
+    $data->{_from} = delete $args->{from};
+    $data->{_to} = delete $args->{to};
+
     return $self->SUPER::create($data, $args);
 }
 
@@ -42,19 +49,16 @@ sub _class { 'edge' }
 # internal name for object index
 sub _register { 'edges' }
 
+
 1;
 
 __END__
 
 =head1 NAME
 
-ArangoDB2::Edge - ArangoDB2 edge API methods
+ArangoDB2::Graph::Edge - ArangoDB2 edge API methods
 
 =head1 DESCRIPTION
-
-ArangoDB edges are fundamentally documents, with a few extra features
-thrown in.  ArangoDB2::Edge inherits most of its methods from
-ArangoDB2::Document.
 
 =head1 ORIGINAL METHODS
 
@@ -72,27 +76,17 @@ ArangoDB2::Document.
 
 =over 4
 
-=item data
+=item new
 
 =item delete
 
 =item get
 
-=item head
-
 =item keepNull
-
-=item list
 
 =item patch
 
-=item policy
-
 =item replace
-
-=item rev
-
-=item type
 
 =item waitForSync
 

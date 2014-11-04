@@ -19,14 +19,21 @@ isa_ok($document, 'ArangoDB2::Document');
 # test required methods
 my @methods = qw(
     create
+    createCollection
     data
     delete
+    edges
     get
     head
+    keepNull
     list
+    new
     patch
+    policy
     replace
     rev
+    type
+    waitForSync
 );
 
 for my $method (@methods) {
@@ -45,6 +52,7 @@ if (!$ENV{LIVE_TEST}) {
 $database->create();
 # create collection
 $res = $collection->create();
+
 # create document
 $res = $document->create({test => "test"});
 ok($res, "create: document created");
@@ -52,38 +60,44 @@ ok($document->name, "create: name set");
 ok($document->rev, "create: rev set");
 is_deeply($document->data, {test => "test"}, "create: local data set");
 is($document, $collection->document($document->name), "create: document registered");
+
 # get document
-$res = $document->get();
+$document->get();
 is_deeply($document->data, {test => "test"}, "get: local data set");
-is($res->{_rev}, $document->rev, "get: rev set");
+ok($document->rev, "get: rev set");
+
 # delete document from register so we can get get it again
 delete $collection->documents->{test};
-# get document from name (_key)
-$document = $collection->document($res->{_key});
+
+# get document from name
+$document = $collection->document($document->name);
 is_deeply($document->data, {test => "test"}, "new(name): local data set");
+
 # replace
 $res = $document->replace({test2 => "test2"});
+ok($res, "replace");
 is_deeply($document->data, {test2 => "test2"}, "replace: local data set");
-is($res->{_rev}, $document->rev, "replace: rev set");
+
 # patch
 $res = $document->patch({test3 => "test3"});
 is($document->data->{test2}, "test2", "patch: local data set");
 is($document->data->{test3}, "test3", "patch: local data set");
-is($res->{_rev}, $document->rev, "patch: rev set");
+
 # head
 $res = $document->head();
 is($res, 200, "head: document exists");
+
 # list
 $res = $collection->document->list();
 ok($res->{documents}, "list");
+
 # delete
 $res = $document->delete();
 is_deeply($document->data, {}, "delete: local data deleted");
-ok(!$document->rev, "delete: local rev deleted");
+
 # try getting again
 $document = $collection->document($res->{_key});
 ok(!$document->rev, "delete: document deleted");
-
 
 # delete
 $res = $collection->delete();

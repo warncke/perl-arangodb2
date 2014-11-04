@@ -23,16 +23,33 @@ my @methods = qw(
     delete
     document
     documents
+    documentCount
+    doCompact
+    edge
+    edges
+    excludeSystem
     figures
+    index
+    indexes
     info
+    isSystem
+    isVolatile
+    journalSize
+    keyOptions
     list
     load
+    numberOfShards
     properties
     rename
     revision
     rotate
+    shardKeys
     truncate
+    type
     unload
+    waitForSync
+    withData
+    withRevisions
 );
 
 for my $method (@methods) {
@@ -63,8 +80,8 @@ ok($res->{name}, "properties");
 $res = $collection->info();
 ok($res->{name}, "info");
 # count
-$res = $collection->count();
-ok(defined $res->{count}, "count");
+$res = $collection->documentCount();
+ok(defined $res->{count}, "documentCount");
 # figures
 $res = $collection->figures();
 ok(defined $res->{figures}, "figures");
