@@ -8,7 +8,7 @@ use ArangoDB2;
 
 my $res;
 
-my $arango = ArangoDB2->new("http://localhost:8529");
+my $arango = ArangoDB2->new("http://localhost:8529", $ENV{ARANGO_USER}, $ENV{ARANGO_PASS});
 my $user = $arango->database->user;
 
 # test required methods
@@ -16,8 +16,8 @@ my @api_methods = qw(
     create
     delete
     get
-    patch
     replace
+    update
 );
 
 my @methods = qw(
@@ -58,7 +58,7 @@ ok($user->active, "user: active");
 ok(!$user->changePassword, "user: changePassword");
 
 # path
-$res = $user->active(0)->patch;
+$res = $user->active(0)->update;
 ok($res, "path");
 
 # try get again

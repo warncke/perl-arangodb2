@@ -76,10 +76,10 @@ sub get
     return $self;
 }
 
-# patch
+# update
 #
 # PATCH /_api/user/{user}
-sub patch
+sub update
 {
     my($self, $args) = @_;
     # process request args
@@ -173,7 +173,7 @@ Fetches data about the specified user.
 Parameters:
     name
 
-=item patch
+=item update
 
 PATCH /_api/user/{user}
 

@@ -24,17 +24,25 @@ sub new
     # we do not want to hold this reference if the
     # parent goes out of scope
     weaken $arango;
+    # create new instance
+    my $self = {
+        arango => $arango,
+    };
+    bless($self, $class);
 
-    my $lwp = LWP::UserAgent->new(
+    $self->{lwp} = LWP::UserAgent->new(
         keep_alive => 1
     );
 
-    my $self = {
-        arango  => $arango,
-        lwp     => $lwp,
-    };
+    # set authentication is username is specified
+    if ($self->arango->username) {
+        $self->lwp->default_headers->authorization_basic(
+            $self->arango->username,
+            $self->arango->password,
+        );
+    }
 
-    return bless($self, $class);
+    return $self;
 }
 
 # delete
@@ -189,7 +197,9 @@ sub response
     my($self, $response) = @_;
 
     if ($response->is_success) {
-        my $res = $JSON->decode($response->content);
+        my $res = eval { $JSON->decode($response->content) };
+        # if content is not valid JSON then return entire content
+        return $response->content unless $res;
         # res may be array in rare cases
         if (!(ref $res eq 'HASH')) {
             return $res;

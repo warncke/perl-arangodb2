@@ -9,7 +9,7 @@ use ArangoDB2::Cursor;
 
 my $res;
 
-my $arango = ArangoDB2->new("http://localhost:8529");
+my $arango = ArangoDB2->new("http://localhost:8529", $ENV{ARANGO_USER}, $ENV{ARANGO_PASS});
 
 my $dbname = "ngukvderybvfgjutecbxzsfhyujmnvgf";
 my $database = $arango->database($dbname);
@@ -44,8 +44,18 @@ if (!$ENV{LIVE_TEST}) {
     exit;
 }
 
+# delete database
+$database->delete;
 # create database
-$database->create();
+$database->create({
+    users => [
+        {
+            username => $ENV{ARANGO_USER},
+            passwd => $ENV{ARANGO_PASS},
+        },
+    ],
+});
+
 # create collection
 $res = $collection->create();
 # create documents

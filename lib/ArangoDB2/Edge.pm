@@ -84,8 +84,6 @@ ArangoDB2::Document.
 
 =item list
 
-=item patch
-
 =item policy
 
 =item replace
@@ -93,6 +91,8 @@ ArangoDB2::Document.
 =item rev
 
 =item type
+
+=item update
 
 =item waitForSync
 

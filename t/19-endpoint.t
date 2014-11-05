@@ -8,7 +8,7 @@ use ArangoDB2;
 
 my $res;
 
-my $arango = ArangoDB2->new("http://localhost:8529");
+my $arango = ArangoDB2->new("http://localhost:8529", $ENV{ARANGO_USER}, $ENV{ARANGO_PASS});
 my $endpoint = $arango->endpoint;
 
 # test required methods
@@ -57,7 +57,7 @@ ok($res, "endpoint delete");
 
 # get list
 $res = $endpoint->list;
-my($end) = grep {$_->{endpoint} eq "tcp://localhost:8530"} @$res;
+($end) = grep {$_->{endpoint} eq "tcp://localhost:8530"} @$res;
 ok(!$end, "endpoint does not exist" );
 
 # delete database

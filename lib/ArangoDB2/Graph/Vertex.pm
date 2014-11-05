@@ -107,10 +107,10 @@ sub get
 # get/set keepNull
 sub keepNull { shift->_get_set_bool('keepNull', @_) }
 
-# patch
+# update
 #
 # PATCH /system/gharial/graph-name/vertex/collection-name/vertex-key
-sub patch
+sub update
 {
     my($self, $data, $args) = @_;
     # require data
@@ -224,7 +224,7 @@ here are the same as ArangoDB::Document.
 
 =item keepNull
 
-=item patch
+=item update
 
 =item replace
 

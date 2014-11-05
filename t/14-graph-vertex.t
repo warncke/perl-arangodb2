@@ -8,7 +8,7 @@ use ArangoDB2;
 
 my $res;
 
-my $arango = ArangoDB2->new("http://localhost:8529");
+my $arango = ArangoDB2->new("http://localhost:8529", $ENV{ARANGO_USER}, $ENV{ARANGO_PASS});
 
 my $dbname = "ngukvderybvfgjutecbxzsfhyujmnvgf";
 my $database = $arango->database($dbname);
@@ -23,7 +23,7 @@ my @methods = qw(
     get
     keepNull
     new
-    patch
+    update
     replace
     waitForSync
 );
@@ -40,10 +40,17 @@ if (!$ENV{LIVE_TEST}) {
     exit;
 }
 
-# delete database first in case it exists
-$database->delete();
+# delete database
+$database->delete;
 # create database
-$database->create();
+$database->create({
+    users => [
+        {
+            username => $ENV{ARANGO_USER},
+            passwd => $ENV{ARANGO_PASS},
+        },
+    ],
+});
 
 # create a new graph
 $graph = $database->graph("myGraph")->create({
@@ -78,12 +85,12 @@ ok($vertex->rev, "get: rev");
 ok($vertex->data, "get: data");
 ok($graph->vertexCollection('foo')->vertices->{$vertex->name}, "get: vertex registered");
 
-# patch
-$vertex->patch({hello => "world"});
+# update
+$vertex->update({hello => "world"});
 
 # get vertex again
 $vertex = $graph->vertexCollection('foo')->vertex->get({name => $vertex->name});
-is($vertex->data->{hello}, "world", "data patched");
+is($vertex->data->{hello}, "world", "data updateed");
 
 # replace
 $vertex->replace({another => "test"});

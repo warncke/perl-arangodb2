@@ -171,10 +171,10 @@ sub list
     );
 }
 
-# patch
+# update
 #
 # PATCH /_api/document/{document-handle}
-sub patch
+sub update
 {
     my($self, $data, $args) = @_;
     # process args
@@ -292,7 +292,7 @@ ArangoDB2::Document - ArangoDB document API methods
 
 =item list
 
-=item patch
+=item update
 
 =item policy
 

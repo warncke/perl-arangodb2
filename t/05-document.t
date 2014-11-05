@@ -8,7 +8,7 @@ use ArangoDB2;
 
 my $res;
 
-my $arango = ArangoDB2->new("http://localhost:8529");
+my $arango = ArangoDB2->new("http://localhost:8529", $ENV{ARANGO_USER}, $ENV{ARANGO_PASS});
 
 my $dbname = "ngukvderybvfgjutecbxzsfhyujmnvgf";
 my $database = $arango->database($dbname);
@@ -28,7 +28,7 @@ my @methods = qw(
     keepNull
     list
     new
-    patch
+    update
     policy
     replace
     rev
@@ -48,8 +48,18 @@ if (!$ENV{LIVE_TEST}) {
     exit;
 }
 
+# delete database
+$database->delete;
 # create database
-$database->create();
+$database->create({
+    users => [
+        {
+            username => $ENV{ARANGO_USER},
+            passwd => $ENV{ARANGO_PASS},
+        },
+    ],
+});
+
 # create collection
 $res = $collection->create();
 
@@ -78,10 +88,10 @@ $res = $document->replace({test2 => "test2"});
 ok($res, "replace");
 is_deeply($document->data, {test2 => "test2"}, "replace: local data set");
 
-# patch
-$res = $document->patch({test3 => "test3"});
-is($document->data->{test2}, "test2", "patch: local data set");
-is($document->data->{test3}, "test3", "patch: local data set");
+# update
+$res = $document->update({test3 => "test3"});
+is($document->data->{test2}, "test2", "update: local data set");
+is($document->data->{test3}, "test3", "update: local data set");
 
 # head
 $res = $document->head();

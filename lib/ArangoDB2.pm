@@ -3,7 +3,11 @@ package ArangoDB2;
 use strict;
 use warnings;
 
-our $VERSION = '0.09';
+use base qw(
+    ArangoDB2::Base
+);
+
+our $VERSION = '0.10';
 
 use URI;
 
@@ -20,12 +24,14 @@ use ArangoDB2::HTTP;
 # API endpoint or hashref of args
 sub new
 {
-    my $class = shift;
+    my($class, $uri, $username, $password) = @_;
     # create instance
     my $self = {};
     bless($self, $class);
-    # for now only accept single string arg
-    $self->uri(@_);
+    # set values
+    $self->uri($uri);
+    $self->username($username);
+    $self->password($password);
 
     return $self;
 }
@@ -38,7 +44,7 @@ sub admin
 {
     my($self) = @_;
 
-    return $self->{admin} ||= ArangoDB2::Admin->new($self);
+    return ArangoDB2::Admin->new($self);
 }
 
 # database
@@ -113,6 +119,17 @@ sub version
     return $self->http->get('/_api/version');
 }
 
+####################
+# PROPERTY METHODS #
+####################
+
+sub username { shift->_get_set('username', @_) }
+sub password { shift->_get_set('password', @_) }
+
+####################
+# INTERNAL METHODS #
+####################
+
 # _class
 #
 # internal name for class
@@ -128,27 +145,90 @@ ArangoDB2 - ArangoDB 2.x HTTP API Interface
 
 =head1 SYNOPSIS
 
-    my $arango = ArangoDB2->new("http://localhost:8259");
+    my $arango = ArangoDB2->new('http://localhost:8259', 'username', 'password');
 
-    my $database = $arango->database("test");
-    my $collection = $database->collection("test");
-    my $document = $collection->document();
+    $arango->database('foo')->create;
+    $aragno->database('foo')->collection('bar')->create;
 
-    # create a new document
-    $document->create({hello => world});
-    # update existing document
-    $document->patch({foo => bar});
+    my $doc = $arango->database('foo')->collection('bar')->document->create({
+        hello => 'world'
+    });
+
+    $doc->update({hello => 'bob'});
 
 =head1 DESCRIPTION
 
-ArangoDB2 provides an interface to the ArangoDB database.
+ArangoDB2 implements the ArangoDB 2.x HTTP API interface.
 
-The Collection and Document APIs are 100% implemented, with the exception of
-support for ETag based conditional operations.
+Most of the API surface is implemented with the exception of:
 
-This is very alpha, so expect significant additions and potentially changes.
+    Async Results
+    Bulk Imports
+    Batch Requests
+    Sharding
+    Simple Queries
+
+The use of ETags to control modification operations has not been implemented.
+
+The public interface should be stable at this point.  The internal plumbing will
+likely continue to evolve.
 
 See the official docs for details on the API: L<https://docs.arangodb.com>
+
+=head1 CONVENTIONS
+
+Parameters for API calls can be set either with setter methods or as arguments to
+the method call.
+
+    $arango->database->name('foo')->create;
+    $arango->database->create({name => 'foo'});
+
+The major difference between these two approaches is that when a parameter is passed
+as an argument it is not stored.  If a parameter is set on the object, then subsequent
+requests will continue to use that parameter.
+
+    # collection will be created
+    $doc1->createCollection(1)->create({foo => 'bar'});
+    # collection will also be created
+    $doc1->create({foo => 'bar'});
+
+    # collection will be created
+    $doc2->create({foo => 'bar'}, {createCollection => 1});
+    # collection will not be created
+    $doc2->create({foo => 'bar'});
+
+Databases, collections, documents, indexes, and other objects are registered and cached
+by name.  This will be made optional in the future.
+
+    # creates a new instance of database
+    $db = $arango->database('foo');
+    # returns the previously created instance
+    $arango->database('foo');
+
+When you retrieve a document, edge, or other object by name this may result in a GET query to
+fetch the details for that object.  If you use the name method to set the name of the object
+after it is created this GET can be avoided.
+
+    # performs a GET
+    $doc1 = $collection->document('foo');
+    # does not perform a GET
+    $doc2 = $collection->document->name('foo');
+
+When you access an object by name this will return an existing cached version of the object if
+it exists.  If you leave out the name this will bypass the object register / cache.
+
+    # uses cached object if it exists
+    $doc1 = $collection->document('foo');
+    # does not use cached object even it it exists
+    $doc2 = $collection->document->name('foo');
+
+Wherever possible the naming of methods and parameters has been kept the same as the names used
+by the API.  The structure of ArangoDB2 attempts to mirror the structure of the API as closely
+as possible.  This should make it easy to refer to the official ArangoDB API documentation when
+using ArangoDB2.
+
+ArangoDB2 does not attempt to validate parameters.  The only validation that takes place is to
+insure that bool parameters have properly encoded JSON true and false values.
 
 =head1 METHODS
 
@@ -166,13 +246,41 @@ See the official docs for details on the API: L<https://docs.arangodb.com>
 
 =item http
 
-=item uri
+=back
+
+=head1 API METHODS
+
+=over 4
 
 =item version
+
+GET /_api/version
+
+Returns the server name and version number.
+
+=back
+
+=head1 PROPERTY METHODS
+
+=over 4
+
+=item uri
+
+L<URI> of ArangoDB endpoint.
+
+=item password
+
+Password to use when accessing ArangoDB.
+
+=item username
+
+Username to use when accessing ArangoDB.
 
 =back
 
 =head1 SEE ALSO
+
+L<ArangoDB>
 
 =head1 AUTHOR
 

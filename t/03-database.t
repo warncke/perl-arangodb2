@@ -8,7 +8,7 @@ use ArangoDB2;
 
 my $res;
 
-my $arango = ArangoDB2->new("http://localhost:8529");
+my $arango = ArangoDB2->new("http://localhost:8529", $ENV{ARANGO_USER}, $ENV{ARANGO_PASS});
 
 # test required methods
 my @methods = qw(
