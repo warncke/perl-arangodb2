@@ -90,6 +90,21 @@ sub http
     return $self->{http} ||= ArangoDB2::HTTP->new($self);
 }
 
+# http_client
+#
+# set string indicating http client to use
+sub http_client {
+    my($self) = shift;
+    # get/set http client value
+    my $http_client = $self->_get_set('http_client', @_)
+        or return;
+    # flush current http client instance so that it will be
+    # re-created using the correct client
+    $self->{http} = undef;
+
+    return $http_client;
+}
+
 # uri
 #
 # get/set URI for API
