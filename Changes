@@ -1,5 +1,8 @@
 Revision history for ArangoDB2
 
+0.11    2014-11-11
+    * Add WWW::Curl based HTTP backend
+
 0.10    2014-11-04
     * Add support for authentication
     * Add support for admin API methods

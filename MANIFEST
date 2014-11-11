@@ -15,6 +15,7 @@ lib/ArangoDB2/Graph/EdgeDefinition.pm
 lib/ArangoDB2/Graph/Vertex.pm
 lib/ArangoDB2/Graph/VertexCollection.pm
 lib/ArangoDB2/HTTP.pm
+lib/ArangoDB2/HTTP/Curl.pm
 lib/ArangoDB2/HTTP/LWP.pm
 lib/ArangoDB2/Index.pm
 lib/ArangoDB2/Query.pm
@@ -46,6 +47,7 @@ t/16-traversal.t
 t/17-replication.t
 t/18-user.t
 t/19-endpoint.t
+t/20-benchmark.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t

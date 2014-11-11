@@ -7,7 +7,7 @@ use base qw(
     ArangoDB2::Base
 );
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 use URI;
 
@@ -260,6 +260,11 @@ insure that bool parameters have properly encoded JSON true and false values.
 =item endpoint
 
 =item http
+
+=item http_client
+
+Get/set string indicating which HTTP backend to use.  Currently supported values are 'lwp' and
+'curl'.  Using curl requires L<WWW::Curl>, which will be used by default if it is installed.
 
 =back
 
