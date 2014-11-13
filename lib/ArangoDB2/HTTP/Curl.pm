@@ -35,10 +35,6 @@ sub new
 
     # setup curl
     my $curl = $self->{curl} = WWW::Curl::Easy->new;
-
-    $curl->setopt(CURLOPT_TCP_KEEPALIVE, 1);
-    $curl->setopt(CURLOPT_TCP_NODELAY, 1);
-
     # set authentication is username is specified
     if ($self->arango->username) {
         $curl->setopt(CURLOPT_USERNAME, $self->arango->username);
